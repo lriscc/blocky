@@ -17,6 +17,7 @@ var paddle = {
 function startGame() {
 	canvas  = document.getElementById("blocky");
 	context = canvas.getContext("2d");
+	paddle.init(canvas);
 	main();
 }
 
@@ -26,7 +27,6 @@ function main() {
 	// Clear previous frame's drawing
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
-	paddle.init(canvas);
 	paddle.draw(canvas, context);
 
 	// Move paddle to the right for next animation frame:
