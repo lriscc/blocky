@@ -4,10 +4,11 @@ var context;
 var paddle = {
 	width : 75,
 	height: 15,
+	spacer:  5,
 	x     : null,
 	y     : null,
 	init: function() {
-		this.y = canvas.height - this.height - 5;
+		this.y = canvas.height - this.height - this.spacer;
 		this.x = canvas.width / 2 - this.width / 2;
 	},
 	draw: function() {
@@ -55,21 +56,62 @@ var ball = {
 	move: function() {
 		// Pre-calculate new x/y position of ball assuming no collisions
 		newx = this.x + this.mx;
+		oldx = this.x;
 		newy = this.y + this.my;
+		paddleTop = canvas.height - paddle.spacer - paddle.height;
+		sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
 
 		// Calculate actual new x position, taking into account possible wall collisions
 		if (newx + this.radius > canvas.width) {
 			// hit right wall; reflect it back
-			overlap  = newx + this.radius - canvas.width;
-			this.x   = canvas.width - this.radius - overlap;
-			this.mx *= -1;
+			overlap    = newx + this.radius - canvas.width;
+			this.x     = newx = canvas.width - this.radius - overlap;
+			this.mx   *= -1;
+			sideBounce =  1;
 		} else if (newx - this.radius < 0) {
 			// hit left wall; reflect it back
-			overlap  = this.radius - newx;
-			this.x   = this.radius + overlap;
-			this.mx *= -1;
+			overlap    = this.radius - newx;
+			this.x     = newx = this.radius + overlap;
+			this.mx   *= -1;
+			sideBounce = -1;
 		} else {
 			this.x = newx;
+		}
+
+		// See if there's any possibility for a paddle collision
+		if (newy + this.radius >= paddleTop) {
+			// See if the bottom of the ball went from above paddleTop height to below
+			// (exactly at it) during this animation frame. If we crossed over that height
+			// then we'll definitely need to look at where the paddle was for a collision
+			if (this.y + this.radius < paddleTop) {
+				// Okay, where exactly was the ball (left/right) when it was at the
+				// paddleTop height?
+				bottomHeight = newy + this.radius;
+				overlap      = bottomHeight - paddleTop;
+				if (overlap < 0) {
+					percentage = this.my / overlap;
+					hitx = oldx + (this.mx * percentage);
+					if (sideBounce > 0 && hitx + this.radius > canvas.width) {
+						overlapX = hitx + this.radius - canvas.width;
+						hitx     = canvas.width - overlapX;
+					} else if (sideBounce < 0 && hitx - this.radius < 0) {
+						hitx = this.radius - hitx;
+					}
+					if (hitx >= paddle.x && hitx <= paddle.x + paddle.width) {
+						// Bounce off paddle and handle Y movement
+						this.y   = paddleTop - overlap - this.radius;
+						this.my *= -1;
+						return false;
+					}
+				} else { // we expect overlap to be exactly 0 in this case
+					if (newx >= paddle.x && newx <= paddle.x + paddle.width) {
+						// Bounce off paddle and handle Y movement
+						this.y   = newy;
+						this.my *= -1;
+						return false;
+					}
+				}
+			}
 		}
 
 		// Calculate actual new y position, taking into account possible wall collisions
