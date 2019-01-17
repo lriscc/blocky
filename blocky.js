@@ -1,3 +1,6 @@
+
+var canvas;
+var context;
 var paddle = {
 	width : 75,
 	height: 15,
@@ -11,9 +14,13 @@ var paddle = {
 	},
 };
 
+function startGame() {
+	canvas  = document.getElementById("blocky");
+	context = canvas.getContext("2d");
+	main();
+}
+
 function main() {
-	var canvas  = document.getElementById("blocky");
-	var context = canvas.getContext("2d");
 	context.fillStyle = "rgb(255, 0, 0)";
 
 	// Clear previous frame's drawing
