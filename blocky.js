@@ -13,12 +13,20 @@ var paddle = {
 	draw: function(canvas, context) {
 		context.fillRect(this.x, this.y, this.width, this.height);
 	},
-	move: function() {
+	move: function(canvas) {
 		if (keypad.left) {
-			this.x -= 5;
+			if (this.x - 5 < 0) {
+				this.x = 0;
+			} else {
+				this.x -= 5;
+			}
 		}
 		if (keypad.right) {
-			this.x += 5;
+			if (this.x + 5 + this.width > canvas.width) {
+				this.x = canvas.width - this.width;
+			} else {
+				this.x += 5;
+			}
 		}
 	},
 };
@@ -94,7 +102,7 @@ function main() {
 	ball.draw(canvas, context);
 
 	// Move the paddle
-	paddle.move();
+	paddle.move(canvas);
 
 	// Move the ball
 	ball.move();
