@@ -3,12 +3,12 @@ var paddle = {
 	height: 15,
 	x     : 20,
 	y     : null,
+	init  : function(canvas) {
+		this.y = canvas.height - this.height - 5;
+	},
 	draw  : function(canvas, context) {
-		if (this.y === null) {
-			this.y = canvas.height - this.height - 5;
-		}
 		context.fillRect(this.x, this.y, this.width, this.height);
-	}
+	},
 };
 
 function main() {
@@ -19,6 +19,7 @@ function main() {
 	// Clear previous frame's drawing
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
+	paddle.init(canvas);
 	paddle.draw(canvas, context);
 
 	// Move paddle to the right for next animation frame:
