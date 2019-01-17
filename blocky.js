@@ -138,7 +138,11 @@ function main() {
 	if (ball.move()) {
 		// GAME OVER! Stop animation/program by returning w/out scheduling/requesting
 		//            a next animation frame.
-		// TODO: draw some game over text
+		context.textAlign    = "center";
+		context.textBaseline = "middle";
+		context.font         = "bold 80px sans-serif";
+		context.beginPath();
+		context.fillText("GAME OVER!", canvas.width / 2, canvas.height / 2, canvas.width);
 		return;
 	}
 
