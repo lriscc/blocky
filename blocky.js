@@ -6,12 +6,20 @@ var paddle = {
 	height: 15,
 	x     : null,
 	y     : null,
-	init  : function(canvas) {
+	init: function(canvas) {
 		this.y = canvas.height - this.height - 5;
 		this.x = canvas.width / 2 - this.width / 2;
 	},
-	draw  : function(canvas, context) {
+	draw: function(canvas, context) {
 		context.fillRect(this.x, this.y, this.width, this.height);
+	},
+	move: function() {
+		if (keypad.left) {
+			this.x -= 5;
+		}
+		if (keypad.right) {
+			this.x += 5;
+		}
 	},
 };
 
@@ -73,13 +81,8 @@ function main() {
 	paddle.draw(canvas, context);
 	ball.draw(canvas, context);
 
-	// Move paddle to the right for next animation frame:
-	if (keypad.left) {
-		paddle.x -= 5;
-	}
-	if (keypad.right) {
-		paddle.x += 5;
-	}
+	// Move the paddle
+	paddle.move();
 
 	// Request to draw next frame when browser is ready:
 	requestAnimationFrame(main);
