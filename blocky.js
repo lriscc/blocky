@@ -1,13 +1,13 @@
 var paddle = {
-	width: 75,
+	width : 75,
 	height: 15,
-	x: 20,
-	y: null,
-	draw: function(canvas, context) {
-		if (paddle.y === null) {
-			paddle.y = canvas.height - paddle.height - 5;
+	x     : 20,
+	y     : null,
+	draw  : function(canvas, context) {
+		if (this.y === null) {
+			this.y = canvas.height - this.height - 5;
 		}
-		context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+		context.fillRect(this.x, this.y, this.width, this.height);
 	}
 };
 
