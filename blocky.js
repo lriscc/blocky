@@ -5,6 +5,9 @@ function main() {
 	var context = canvas.getContext("2d");
 	context.fillStyle = "rgb(255, 0, 0)";
 
+	// Clear previous frame's drawing
+	context.clearRect(0, 0, canvas.width, canvas.height);
+
 	// Draw the paddle:
 	var paddleWidth  = 75;
 	var paddleHeight = 15;
