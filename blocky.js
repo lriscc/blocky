@@ -1,11 +1,15 @@
-var paddleX = 20;
+var paddle = {
+	width: 75,
+	height: 15,
+	x: 20,
+	y: null,
+};
 
 function drawPaddle(canvas, context) {
-	var paddleWidth  = 75;
-	var paddleHeight = 15;
-	//var paddleX      = 20;
-	var paddleY      = canvas.height - paddleHeight - 5;
-	context.fillRect(paddleX, paddleY, paddleWidth, paddleHeight);
+	if (paddle.y === null) {
+		paddle.y = canvas.height - paddle.height - 5;
+	}
+	context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
 }
 
 function main() {
@@ -19,7 +23,7 @@ function main() {
 	drawPaddle(canvas, context);
 
 	// Move paddle to the right for next animation frame:
-	paddleX += 1;
+	paddle.x += 1;
 
 	// Request to draw next frame when browser is ready:
 	requestAnimationFrame(main);
