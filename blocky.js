@@ -4,10 +4,11 @@ var context;
 var paddle = {
 	width : 75,
 	height: 15,
-	x     : 20,
+	x     : null,
 	y     : null,
 	init  : function(canvas) {
 		this.y = canvas.height - this.height - 5;
+		this.x = canvas.width / 2 - this.width / 2;
 	},
 	draw  : function(canvas, context) {
 		context.fillRect(this.x, this.y, this.width, this.height);
