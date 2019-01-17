@@ -27,11 +27,17 @@ var ball = {
 	radius: 5,
 	x     : null,
 	y     : null,
-	mx    : 3, // velocity in the x direction
-	my    : 3, // velocity in the y direction
+	v     : 4,    // total constant velocity of the ball
+	mx    : null, // velocity in the x direction
+	my    : null, // velocity in the y direction
 	init: function(canvas) {
-		this.y = canvas.height / 2;
-		this.x = canvas.width / 2;
+		this.y  = canvas.height / 2;
+		this.x  = canvas.width / 2;
+		this.my = Math.random() * 8 - 4;
+		this.mx = Math.sqrt(this.v ** 2 - this.my ** 2)
+		if (Math.floor(Math.random() * 2) == 0) {
+			this.mx *= -1;
+		}
 	},
 	draw: function(canvas, context) {
 		context.beginPath();
