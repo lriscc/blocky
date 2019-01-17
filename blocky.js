@@ -15,6 +15,21 @@ var paddle = {
 	},
 };
 
+var ball = {
+	radius: 5,
+	x     : null,
+	y     : null,
+	init  : function(canvas) {
+		this.y = canvas.height / 2;
+		this.x = canvas.width / 2;
+	},
+	draw  : function(canvas, context) {
+		context.beginPath();
+		context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+		context.fill();
+	},
+};
+
 var keypad = {
 	left   : false,
 	right  : false,
@@ -44,6 +59,7 @@ function startGame() {
 	canvas  = document.getElementById("blocky");
 	context = canvas.getContext("2d");
 	paddle.init(canvas);
+	ball.init(canvas);
 	keypad.init();
 	main();
 }
@@ -55,6 +71,7 @@ function main() {
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
 	paddle.draw(canvas, context);
+	ball.draw(canvas, context);
 
 	// Move paddle to the right for next animation frame:
 	if (keypad.left) {
