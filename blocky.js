@@ -6,14 +6,14 @@ var paddle = {
 	height: 15,
 	x     : null,
 	y     : null,
-	init: function(canvas) {
+	init: function() {
 		this.y = canvas.height - this.height - 5;
 		this.x = canvas.width / 2 - this.width / 2;
 	},
-	draw: function(canvas, context) {
+	draw: function() {
 		context.fillRect(this.x, this.y, this.width, this.height);
 	},
-	move: function(canvas) {
+	move: function() {
 		if (keypad.left) {
 			if (this.x - 5 < 0) {
 				this.x = 0;
@@ -38,7 +38,7 @@ var ball = {
 	v     : 4,    // total constant velocity of the ball
 	mx    : null, // velocity in the x direction
 	my    : null, // velocity in the y direction
-	init: function(canvas) {
+	init: function() {
 		this.y  = canvas.height / 2;
 		this.x  = canvas.width / 2;
 		this.my = Math.random() * 8 - 4;
@@ -47,7 +47,7 @@ var ball = {
 			this.mx *= -1;
 		}
 	},
-	draw: function(canvas, context) {
+	draw: function() {
 		context.beginPath();
 		context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 		context.fill();
@@ -117,8 +117,8 @@ var keypad = {
 function startGame() {
 	canvas  = document.getElementById("blocky");
 	context = canvas.getContext("2d");
-	paddle.init(canvas);
-	ball.init(canvas);
+	paddle.init();
+	ball.init();
 	keypad.init();
 	main();
 }
@@ -129,11 +129,11 @@ function main() {
 	// Clear previous frame's drawing
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
-	paddle.draw(canvas, context);
-	ball.draw(canvas, context);
+	paddle.draw();
+	ball.draw();
 
 	// Move the paddle
-	paddle.move(canvas);
+	paddle.move();
 
 	// Move the ball
 	ball.move();
