@@ -3,14 +3,13 @@ var paddle = {
 	height: 15,
 	x: 20,
 	y: null,
-};
-
-function drawPaddle(canvas, context) {
-	if (paddle.y === null) {
-		paddle.y = canvas.height - paddle.height - 5;
+	draw: function(canvas, context) {
+		if (paddle.y === null) {
+			paddle.y = canvas.height - paddle.height - 5;
+		}
+		context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
 	}
-	context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
-}
+};
 
 function main() {
 	var canvas  = document.getElementById("blocky");
@@ -20,7 +19,7 @@ function main() {
 	// Clear previous frame's drawing
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
-	drawPaddle(canvas, context);
+	paddle.draw(canvas, context);
 
 	// Move paddle to the right for next animation frame:
 	paddle.x += 1;
