@@ -53,8 +53,39 @@ var ball = {
 		context.fill();
 	},
 	move: function() {
-		this.x += this.mx;
-		this.y += this.my;
+		// Pre-calculate new x/y position of ball assuming no collisions
+		newx = this.x + this.mx;
+		newy = this.y + this.my;
+
+		// Calculate actual new x position, taking into account possible wall collisions
+		if (newx + this.radius > canvas.width) {
+			// hit right wall; reflect it back
+			overlap  = newx + this.radius - canvas.width;
+			this.x   = canvas.width - this.radius - overlap;
+			this.mx *= -1;
+		} else if (newx - this.radius < 0) {
+			// hit left wall; reflect it back
+			overlap  = this.radius - newx;
+			this.x   = this.radius + overlap;
+			this.mx *= -1;
+		} else {
+			this.x = newx;
+		}
+
+		// Calculate actual new y position, taking into account possible wall collisions
+		if (newy + this.radius > canvas.height) {
+			// hit bottom wall; reflect it back
+			overlap  = newy + this.radius - canvas.height;
+			this.y   = canvas.height - this.radius - overlap;
+			this.my *= -1;
+		} else if (newy - this.radius < 0) {
+			// hit top wall; reflect it back
+			overlap  = this.radius - newy;
+			this.y   = this.radius + overlap;
+			this.my *= -1;
+		} else {
+			this.y = newy;
+		}
 	},
 };
 
