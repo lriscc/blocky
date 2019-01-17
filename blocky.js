@@ -6,5 +6,7 @@ function main() {
 	// Draw the paddle:
 	var paddleWidth  = 75;
 	var paddleHeight = 15;
-	context.fillRect(20, 20, paddleWidth, paddleHeight);
+	var paddleX = 20;
+	var paddleY = 20;
+	context.fillRect(paddleX, paddleY, paddleWidth, paddleHeight);
 }
