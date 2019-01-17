@@ -27,14 +27,18 @@ var ball = {
 	radius: 5,
 	x     : null,
 	y     : null,
-	init  : function(canvas) {
+	init: function(canvas) {
 		this.y = canvas.height / 2;
 		this.x = canvas.width / 2;
 	},
-	draw  : function(canvas, context) {
+	draw: function(canvas, context) {
 		context.beginPath();
 		context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 		context.fill();
+	},
+	move: function() {
+		this.x += 3;
+		this.y += 3;
 	},
 };
 
@@ -83,6 +87,9 @@ function main() {
 
 	// Move the paddle
 	paddle.move();
+
+	// Move the ball
+	ball.move();
 
 	// Request to draw next frame when browser is ready:
 	requestAnimationFrame(main);
