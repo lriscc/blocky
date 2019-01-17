@@ -74,10 +74,8 @@ var ball = {
 
 		// Calculate actual new y position, taking into account possible wall collisions
 		if (newy + this.radius > canvas.height) {
-			// hit bottom wall; reflect it back
-			overlap  = newy + this.radius - canvas.height;
-			this.y   = canvas.height - this.radius - overlap;
-			this.my *= -1;
+			// hit bottom wall: GAME OVER!
+			return true;
 		} else if (newy - this.radius < 0) {
 			// hit top wall; reflect it back
 			overlap  = this.radius - newy;
@@ -86,6 +84,7 @@ var ball = {
 		} else {
 			this.y = newy;
 		}
+		return false;
 	},
 };
 
@@ -136,7 +135,12 @@ function main() {
 	paddle.move();
 
 	// Move the ball
-	ball.move();
+	if (ball.move()) {
+		// GAME OVER! Stop animation/program by returning w/out scheduling/requesting
+		//            a next animation frame.
+		// TODO: draw some game over text
+		return;
+	}
 
 	// Request to draw next frame when browser is ready:
 	requestAnimationFrame(main);
