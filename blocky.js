@@ -1,5 +1,13 @@
 var paddleX = 20;
 
+function drawPaddle(canvas, context) {
+	var paddleWidth  = 75;
+	var paddleHeight = 15;
+	//var paddleX      = 20;
+	var paddleY      = canvas.height - paddleHeight - 5;
+	context.fillRect(paddleX, paddleY, paddleWidth, paddleHeight);
+}
+
 function main() {
 	var canvas  = document.getElementById("blocky");
 	var context = canvas.getContext("2d");
@@ -8,12 +16,7 @@ function main() {
 	// Clear previous frame's drawing
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
-	// Draw the paddle:
-	var paddleWidth  = 75;
-	var paddleHeight = 15;
-	//var paddleX      = 20;
-	var paddleY      = canvas.height - paddleHeight - 5;
-	context.fillRect(paddleX, paddleY, paddleWidth, paddleHeight);
+	drawPaddle(canvas, context);
 
 	// Move paddle to the right for next animation frame:
 	paddleX += 1;
