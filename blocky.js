@@ -15,10 +15,33 @@ var paddle = {
 	},
 };
 
+var rightPressed = false;
+var leftPressed = false;
+
+function keyDownHandler(event) {
+	if (event.keyCode == 37) {
+		leftPressed = true;
+	}
+	if (event.keyCode == 39) {
+		rightPressed = true;
+	}
+}
+
+function keyUpHandler(event) {
+	if (event.keyCode == 37) {
+		leftPressed = false;
+	}
+	if (event.keyCode == 39) {
+		rightPressed = false;
+	}
+}
+
 function startGame() {
 	canvas  = document.getElementById("blocky");
 	context = canvas.getContext("2d");
 	paddle.init(canvas);
+	document.addEventListener('keydown', keyDownHandler, false);
+	document.addEventListener('keyup', keyUpHandler, false);
 	main();
 }
 
@@ -31,7 +54,12 @@ function main() {
 	paddle.draw(canvas, context);
 
 	// Move paddle to the right for next animation frame:
-	paddle.x += 1;
+	if (leftPressed) {
+		paddle.x -= 5;
+	}
+	if (rightPressed) {
+		paddle.x += 5;
+	}
 
 	// Request to draw next frame when browser is ready:
 	requestAnimationFrame(main);
