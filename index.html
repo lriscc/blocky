@@ -6,5 +6,11 @@
 		<canvas id="blocky" width="600" height="400" style="border: 1px solid black">
 			You shouldn't see this text.
 		</canvas>
+		<script type="text/javascript">
+			var canvas  = document.getElementById("blocky");
+			var context = canvas.getContext("2d");
+			context.fillStyle = "rgb(255, 0, 0)";
+			context.fillRect(20, 20, 300, 300);
+		</script>
 	</body>
 </html>
