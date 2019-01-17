@@ -27,6 +27,8 @@ var ball = {
 	radius: 5,
 	x     : null,
 	y     : null,
+	mx    : 3, // velocity in the x direction
+	my    : 3, // velocity in the y direction
 	init: function(canvas) {
 		this.y = canvas.height / 2;
 		this.x = canvas.width / 2;
@@ -37,8 +39,8 @@ var ball = {
 		context.fill();
 	},
 	move: function() {
-		this.x += 3;
-		this.y += 3;
+		this.x += this.mx;
+		this.y += this.my;
 	},
 };
 
