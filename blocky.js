@@ -1,6 +1,7 @@
-
+// Game Constants (sizes/speeds/colors of things)
 var CANVAS_WIDTH             = 600;
 var CANVAS_HEIGHT            = 400;
+var CANVAS_BACKGROUND_COLOR  = "rgb(0, 16, 64)"; // midnight blue
 var BLOCK_WIDTH              =  80;
 var BLOCK_HEIGHT             =  20;
 var BLOCK_HORIZONTAL_PADDING =   5; // horizontal space between adjacent blocks
@@ -171,10 +172,10 @@ function BallConstructor(context, paddle) {
 }
 
 function startGame() {
-	// Get HTML DOM elements (<canvas id="blocky"> and associated 2D drawing context)
+	// Get HTML DOM elements (<canvas id="blocky">) and associated 2D drawing context
 	var canvas    = document.getElementById("blocky");
-	canvas.width  = CANVAS_WIDTH;
-	canvas.height = CANVAS_HEIGHT;
+	canvas.width  = CANVAS_WIDTH;  // update HTML <canvas> element's width
+	canvas.height = CANVAS_HEIGHT; // update HTML <canvas> element's height
 	context       = canvas.getContext("2d");
 
 	// Create out main game elements (a keypad controller, paddle, ball, and some blocks)
@@ -198,15 +199,19 @@ function startGame() {
 			blocks.push(new BlockConstructor(context, x, y));
 		}
 	}
-	main(context, paddle, ball, blocks);
+	nextFrame(context, paddle, ball, blocks);
 }
 
-function main(context, paddle, ball, blocks) {
-	context.fillStyle = "rgb(255, 0, 0)";
+function nextFrame(context, paddle, ball, blocks) {
 
 	// Clear previous frame's drawing
 	context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
+	// Draw our main background color
+	context.fillStyle = CANVAS_BACKGROUND_COLOR;
+	context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+	context.fillStyle = "rgb(255, 0, 0)";
 	paddle.draw();
 	ball.draw();
 	for (var i = 0; i < blocks.length; i++) {
@@ -229,5 +234,5 @@ function main(context, paddle, ball, blocks) {
 	}
 
 	// Request to draw next frame when browser is ready:
-	requestAnimationFrame(main.bind(this, context, paddle, ball, blocks));
+	requestAnimationFrame(nextFrame.bind(this, context, paddle, ball, blocks));
 }
