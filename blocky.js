@@ -222,8 +222,7 @@ function startGame() {
 }
 
 
-function nextFrame(context, paddle, ball, blocks) {
-
+function drawFrame(context, paddle, ball, blocks) {
 	// Clear previous frame's drawing and draw/fill our main background color
 	context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 	context.fillStyle = CANVAS_BACKGROUND_COLOR;
@@ -236,6 +235,11 @@ function nextFrame(context, paddle, ball, blocks) {
 	for (var i = 0; i < blocks.length; i++) {
 		blocks[i].draw();
 	}
+}
+
+
+function nextFrame(context, paddle, ball, blocks) {
+	drawFrame(context, paddle, ball, blocks);
 
 	// Move stuff (and calculate any collisions and their consequences); except for the game
 	// ending consequence, these new positions won't show up until the next frame is rendered.
