@@ -97,81 +97,6 @@ function BallConstructor(context, paddle) {
 		this.context.restore();
 
 	}
-	this.move = function() {
-		// Pre-calculate new x/y position of ball assuming no collisions
-		newx = this.x + this.mx;
-		oldx = this.x;
-		newy = this.y + this.my;
-		paddleTop = CANVAS_HEIGHT - PADDLE_SPACER - PADDLE_HEIGHT;
-		sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
-
-		// Calculate actual new x position, taking into account possible wall collisions
-		if (newx + BALL_RADIUS > CANVAS_WIDTH) {
-			// hit right wall; reflect it back
-			overlap    = newx + BALL_RADIUS - CANVAS_WIDTH;
-			this.x     = newx = CANVAS_WIDTH - BALL_RADIUS - overlap;
-			this.mx   *= -1;
-			sideBounce =  1;
-		} else if (newx - BALL_RADIUS < 0) {
-			// hit left wall; reflect it back
-			overlap    = BALL_RADIUS - newx;
-			this.x     = newx = BALL_RADIUS + overlap;
-			this.mx   *= -1;
-			sideBounce = -1;
-		} else {
-			this.x = newx;
-		}
-
-		// See if there's any possibility for a paddle collision
-		if (newy + BALL_RADIUS >= paddleTop) {
-			// See if the bottom of the ball went from above paddleTop height to below
-			// (exactly at it) during this animation frame. If we crossed over that height
-			// then we'll definitely need to look at where the paddle was for a collision
-			if (this.y + BALL_RADIUS < paddleTop) {
-				// Okay, where exactly was the ball (left/right) when it was at the
-				// paddleTop height?
-				bottomHeight = newy + BALL_RADIUS;
-				overlap      = bottomHeight - paddleTop;
-				if (overlap < 0) {
-					percentage = this.my / overlap;
-					hitx = oldx + (this.mx * percentage);
-					if (sideBounce > 0 && hitx + BALL_RADIUS > CANVAS_WIDTH) {
-						overlapX = hitx + BALL_RADIUS - CANVAS_WIDTH;
-						hitx     = CANVAS_WIDTH - overlapX;
-					} else if (sideBounce < 0 && hitx - BALL_RADIUS < 0) {
-						hitx = BALL_RADIUS - hitx;
-					}
-					if (hitx >= this.paddle.x && hitx <= this.paddle.x + PADDLE_WIDTH) {
-						// Bounce off paddle and handle Y movement
-						this.y   = paddleTop - overlap - BALL_RADIUS;
-						this.my *= -1;
-						return false;
-					}
-				} else { // we expect overlap to be exactly 0 in this case
-					if (newx >= this.paddle.x && newx <= this.paddle.x + PADDLE_WIDTH) {
-						// Bounce off paddle and handle Y movement
-						this.y   = newy;
-						this.my *= -1;
-						return false;
-					}
-				}
-			}
-		}
-
-		// Calculate actual new y position, taking into account possible wall collisions
-		if (newy + BALL_RADIUS > CANVAS_HEIGHT) {
-			// hit bottom wall: GAME OVER!
-			return true;
-		} else if (newy - BALL_RADIUS < 0) {
-			// hit top wall; reflect it back
-			overlap  = BALL_RADIUS - newy;
-			this.y   = BALL_RADIUS + overlap;
-			this.my *= -1;
-		} else {
-			this.y = newy;
-		}
-		return false;
-	}
 }
 
 
@@ -249,8 +174,87 @@ function moveObjects(paddle, ball, blocks) {
 	//
 	// If we return true, that indicates to the caller that the game is over. Otherwise the game
 	// should continue.
+
+	// Just move the paddle now according to keyboard input
 	paddle.move();
-	return ball.move();
+
+	// Now let's figure out what the ball might hit, what the results should be, and what it's
+	// new position should be.
+
+	// Pre-calculate new x/y position of ball assuming no collisions
+	newx = ball.x + ball.mx;
+	oldx = ball.x;
+	newy = ball.y + ball.my;
+	paddleTop = CANVAS_HEIGHT - PADDLE_SPACER - PADDLE_HEIGHT;
+	sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
+
+	// Calculate actual new x position, taking into account possible wall collisions
+	if (newx + BALL_RADIUS > CANVAS_WIDTH) {
+		// hit right wall; reflect it back
+		overlap    = newx + BALL_RADIUS - CANVAS_WIDTH;
+		ball.x     = newx = CANVAS_WIDTH - BALL_RADIUS - overlap;
+		ball.mx   *= -1;
+		sideBounce =  1;
+	} else if (newx - BALL_RADIUS < 0) {
+		// hit left wall; reflect it back
+		overlap    = BALL_RADIUS - newx;
+		ball.x     = newx = BALL_RADIUS + overlap;
+		ball.mx   *= -1;
+		sideBounce = -1;
+	} else {
+		ball.x = newx;
+	}
+
+	// See if there's any possibility for a paddle collision
+	if (newy + BALL_RADIUS >= paddleTop) {
+		// See if the bottom of the ball went from above paddleTop height to below
+		// (exactly at it) during this animation frame. If we crossed over that height
+		// then we'll definitely need to look at where the paddle was for a collision
+		if (ball.y + BALL_RADIUS < paddleTop) {
+			// Okay, where exactly was the ball (left/right) when it was at the
+			// paddleTop height?
+			bottomHeight = newy + BALL_RADIUS;
+			overlap      = bottomHeight - paddleTop;
+			if (overlap < 0) {
+				percentage = ball.my / overlap;
+				hitx = oldx + (ball.mx * percentage);
+				if (sideBounce > 0 && hitx + BALL_RADIUS > CANVAS_WIDTH) {
+					overlapX = hitx + BALL_RADIUS - CANVAS_WIDTH;
+					hitx     = CANVAS_WIDTH - overlapX;
+				} else if (sideBounce < 0 && hitx - BALL_RADIUS < 0) {
+					hitx = BALL_RADIUS - hitx;
+				}
+				if (hitx >= ball.paddle.x && hitx <= ball.paddle.x + PADDLE_WIDTH) {
+					// Bounce off paddle and handle Y movement
+					ball.y   = paddleTop - overlap - BALL_RADIUS;
+					ball.my *= -1;
+					return false;
+				}
+			} else { // we expect overlap to be exactly 0 in this case
+				if (newx >= ball.paddle.x && newx <= ball.paddle.x + PADDLE_WIDTH) {
+					// Bounce off paddle and handle Y movement
+					ball.y   = newy;
+					ball.my *= -1;
+					return false;
+				}
+			}
+		}
+	}
+
+	// Calculate actual new y position, taking into account possible wall collisions
+	if (newy + BALL_RADIUS > CANVAS_HEIGHT) {
+		// hit bottom wall: GAME OVER!
+		return true;
+	} else if (newy - BALL_RADIUS < 0) {
+		// hit top wall; reflect it back
+		overlap  = BALL_RADIUS - newy;
+		ball.y   = BALL_RADIUS + overlap;
+		ball.my *= -1;
+	} else {
+		ball.y = newy;
+	}
+
+	return false;
 }
 
 
