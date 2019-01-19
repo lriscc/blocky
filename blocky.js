@@ -2,6 +2,7 @@
 var CANVAS_WIDTH             = 600;
 var CANVAS_HEIGHT            = 400;
 var CANVAS_BACKGROUND_COLOR  = "rgb(0, 16, 64)"; // midnight blue
+var CANVAS_DEFAULT_COLOR     = "rgb(255, 0, 0)"; // RED; only used for stuff that fail to set own color
 var PADDLE_WIDTH             =  75;
 var PADDLE_HEIGHT            =  15;
 var PADDLE_SPACER            =   5; // how far above bottom of canvas paddle should hover
@@ -224,21 +225,21 @@ function startGame() {
 function nextFrame(context, paddle, ball, blocks) {
 
 	// Clear previous frame's drawing and draw/fill our main background color
-	context.fillStyle = CANVAS_BACKGROUND_COLOR;
 	context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+	context.fillStyle = CANVAS_BACKGROUND_COLOR;
 	context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+	context.fillStyle = CANVAS_DEFAULT_COLOR;
 
-	context.fillStyle = "rgb(255, 0, 0)";
+	// Draw main game objects as they currently are positioned (positioned here on last frame)
 	paddle.draw();
 	ball.draw();
 	for (var i = 0; i < blocks.length; i++) {
 		blocks[i].draw();
 	}
 
-	// Move the paddle
+	// Move stuff (and calculate any collisions and their consequences); except for the game
+	// ending consequence, these new positions won't show up until the next frame is rendered.
 	paddle.move();
-
-	// Move the ball
 	if (ball.move()) {
 		// GAME OVER! Stop animation/program by returning w/out scheduling/requesting
 		//            a next animation frame.
