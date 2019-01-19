@@ -1,6 +1,20 @@
 
+var BLOCK_WIDTH  = 80;
+var BLOCK_HEIGHT = 20;
+var BLOCK_HPADDING = 5; // horizontal space between adjacent blocks
+var BLOCK_VPADDING = 5; // vertical space between adjacent blocks
+function BlockConstructor(x, y) {
+	// Location of top-left corner of the block
+	this.x = x;
+	this.y = y;
+	this.draw = function() {
+		context.fillRect(this.x, this.y, BLOCK_WIDTH, BLOCK_HEIGHT);
+	}
+}
+
 var canvas;
 var context;
+var blocks;
 var paddle = {
 	width : 75,
 	height: 15,
@@ -158,6 +172,24 @@ var keypad = {
 function startGame() {
 	canvas  = document.getElementById("blocky");
 	context = canvas.getContext("2d");
+	blocks  = [];
+
+	var maxBlocksPerRow = Math.floor((canvas.width - BLOCK_HPADDING) / (BLOCK_WIDTH + BLOCK_HPADDING));
+	var maxRowsOfBlocks = Math.floor(((canvas.height / 2) - BLOCK_VPADDING) / (BLOCK_HEIGHT + BLOCK_VPADDING));
+	var leftBlockMargin = BLOCK_HPADDING + ((canvas.width - (maxBlocksPerRow * (BLOCK_WIDTH + BLOCK_HPADDING))) / 2);
+	var topBlockMargin  = BLOCK_VPADDING;
+
+	for (var i = 0; i < maxRowsOfBlocks; i++) {
+		var rowHOffset = Math.floor(BLOCK_WIDTH / 3) * (i % 3);
+		var rowVOffset = topBlockMargin + (i * (BLOCK_HEIGHT + BLOCK_VPADDING));
+		// omit 1 possible block per row so we have offset space for stretcher-bond style "brickwork"
+		for (var j = 0; j < maxBlocksPerRow - 1; j++) {
+			blocks.push(new BlockConstructor(
+				leftBlockMargin + rowHOffset + (j * (BLOCK_WIDTH + BLOCK_HPADDING)),
+				rowVOffset
+			));
+		}
+	}
 	paddle.init();
 	ball.init();
 	keypad.init();
@@ -172,6 +204,9 @@ function main() {
 
 	paddle.draw();
 	ball.draw();
+	for (var i = 0; i < blocks.length; i++) {
+		blocks[i].draw();
+	}
 
 	// Move the paddle
 	paddle.move();
