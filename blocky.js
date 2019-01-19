@@ -218,6 +218,11 @@ function startGame() {
 			blocks.push(new BlockConstructor(context, x, y));
 		}
 	}
+
+	// Draw the initial frame with everything at it's starting/default position
+	drawFrame(context, paddle, ball, blocks);
+
+	// Process the first action frame (will recursive call itself; redraws after processing)
 	nextFrame(context, paddle, ball, blocks);
 }
 
@@ -239,10 +244,7 @@ function drawFrame(context, paddle, ball, blocks) {
 
 
 function nextFrame(context, paddle, ball, blocks) {
-	drawFrame(context, paddle, ball, blocks);
-
-	// Move stuff (and calculate any collisions and their consequences); except for the game
-	// ending consequence, these new positions won't show up until the next frame is rendered.
+	// Move stuff and calculate any collisions and their consequences
 	paddle.move();
 	if (ball.move()) {
 		// GAME OVER! Stop animation/program by returning w/out scheduling/requesting
@@ -254,6 +256,9 @@ function nextFrame(context, paddle, ball, blocks) {
 		context.fillText("GAME OVER!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, CANVAS_WIDTH);
 		return;
 	}
+
+	// Draw the frame with everything at it's new position
+	drawFrame(context, paddle, ball, blocks);
 
 	// Request to draw next frame when browser is ready:
 	requestAnimationFrame(nextFrame.bind(this, context, paddle, ball, blocks));
