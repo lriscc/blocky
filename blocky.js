@@ -13,6 +13,7 @@ var PADDLE_SPACER            =   5; // how far above bottom of canvas paddle sho
 var PADDLE_COLOR             = "rgb(232, 166, 62)";
 var BALL_RADIUS              =   5;
 var BALL_MAX_VELOCITY        =   4; // pixels per frame
+var BALL_COLOR               = "rgb(145, 255, 244)";
 
 // Block object constructor
 function BlockConstructor(context, x, y) {
@@ -98,9 +99,13 @@ function BallConstructor(context, paddle) {
 	}
 
 	this.draw = function() {
+		this.context.save();
+		this.context.fillStyle = BALL_COLOR;
 		this.context.beginPath();
 		this.context.arc(this.x, this.y, BALL_RADIUS, 0, 2 * Math.PI);
 		this.context.fill();
+		this.context.restore();
+
 	}
 	this.move = function() {
 		// Pre-calculate new x/y position of ball assuming no collisions
