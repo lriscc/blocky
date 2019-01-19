@@ -6,6 +6,7 @@ var BLOCK_WIDTH              =  80;
 var BLOCK_HEIGHT             =  20;
 var BLOCK_HORIZONTAL_PADDING =   5; // horizontal space between adjacent blocks
 var BLOCK_VERTICAL_PADDING   =   5; // vertical space between adjacent blocks
+var BLOCK_COLOR              = "rgb(62, 232, 119)";
 var PADDLE_WIDTH             =  75;
 var PADDLE_HEIGHT            =  15;
 var PADDLE_SPACER            =   5; // how far above bottom of canvas paddle should hover
@@ -19,7 +20,10 @@ function BlockConstructor(context, x, y) {
 	this.x = x;
 	this.y = y;
 	this.draw = function() {
+		this.context.save();
+		this.context.fillStyle = BLOCK_COLOR;
 		this.context.fillRect(this.x, this.y, BLOCK_WIDTH, BLOCK_HEIGHT);
+		this.context.restore();
 	}
 }
 
@@ -204,11 +208,9 @@ function startGame() {
 
 function nextFrame(context, paddle, ball, blocks) {
 
-	// Clear previous frame's drawing
-	context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-	// Draw our main background color
+	// Clear previous frame's drawing and draw/fill our main background color
 	context.fillStyle = CANVAS_BACKGROUND_COLOR;
+	context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 	context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
 	context.fillStyle = "rgb(255, 0, 0)";
