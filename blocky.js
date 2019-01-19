@@ -243,10 +243,20 @@ function drawFrame(context, paddle, ball, blocks) {
 }
 
 
+function moveObjects(paddle, ball, blocks) {
+	// Move objects according to velocity and keyboard input; calculate collisions; determine
+	// resulting game effects (ball bouncing, game ending, etc).
+	//
+	// If we return true, that indicates to the caller that the game is over. Otherwise the game
+	// should continue.
+	paddle.move();
+	return ball.move();
+}
+
+
 function nextFrame(context, paddle, ball, blocks) {
 	// Move stuff and calculate any collisions and their consequences
-	paddle.move();
-	if (ball.move()) {
+	if (moveObjects(paddle, ball, blocks)) {
 		// GAME OVER! Stop animation/program by returning w/out scheduling/requesting
 		//            a next animation frame.
 		context.textAlign    = "center";
