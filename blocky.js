@@ -1,10 +1,12 @@
 
-var CANVAS_WIDTH  = 600;
-var CANVAS_HEIGHT = 400;
-var BLOCK_WIDTH  = 80;
-var BLOCK_HEIGHT = 20;
-var BLOCK_HPADDING = 5; // horizontal space between adjacent blocks
-var BLOCK_VPADDING = 5; // vertical space between adjacent blocks
+var CANVAS_WIDTH             = 600;
+var CANVAS_HEIGHT            = 400;
+var BLOCK_WIDTH              =  80;
+var BLOCK_HEIGHT             =  20;
+var BLOCK_HORIZONTAL_PADDING =   5; // horizontal space between adjacent blocks
+var BLOCK_VERTICAL_PADDING   =   5; // vertical space between adjacent blocks
+
+// Block object constructor
 function BlockConstructor(x, y) {
 	// Location of top-left corner of the block
 	this.x = x;
@@ -178,18 +180,18 @@ function startGame() {
 	context = canvas.getContext("2d");
 	blocks  = [];
 
-	var maxBlocksPerRow = Math.floor((canvas.width - BLOCK_HPADDING) / (BLOCK_WIDTH + BLOCK_HPADDING));
-	var maxRowsOfBlocks = Math.floor(((canvas.height / 2) - BLOCK_VPADDING) / (BLOCK_HEIGHT + BLOCK_VPADDING));
-	var leftBlockMargin = BLOCK_HPADDING + ((canvas.width - (maxBlocksPerRow * (BLOCK_WIDTH + BLOCK_HPADDING))) / 2);
-	var topBlockMargin  = BLOCK_VPADDING;
+	var maxBlocksPerRow = Math.floor((canvas.width - BLOCK_HORIZONTAL_PADDING) / (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING));
+	var maxRowsOfBlocks = Math.floor(((canvas.height / 2) - BLOCK_VERTICAL_PADDING) / (BLOCK_HEIGHT + BLOCK_VERTICAL_PADDING));
+	var leftBlockMargin = BLOCK_HORIZONTAL_PADDING + ((canvas.width - (maxBlocksPerRow * (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING))) / 2);
+	var topBlockMargin  = BLOCK_VERTICAL_PADDING;
 
 	for (var i = 0; i < maxRowsOfBlocks; i++) {
 		var rowHOffset = Math.floor(BLOCK_WIDTH / 3) * (i % 3);
-		var rowVOffset = topBlockMargin + (i * (BLOCK_HEIGHT + BLOCK_VPADDING));
+		var rowVOffset = topBlockMargin + (i * (BLOCK_HEIGHT + BLOCK_VERTICAL_PADDING));
 		// omit 1 possible block per row so we have offset space for stretcher-bond style "brickwork"
 		for (var j = 0; j < maxBlocksPerRow - 1; j++) {
 			blocks.push(new BlockConstructor(
-				leftBlockMargin + rowHOffset + (j * (BLOCK_WIDTH + BLOCK_HPADDING)),
+				leftBlockMargin + rowHOffset + (j * (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING)),
 				rowVOffset
 			));
 		}
