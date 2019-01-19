@@ -26,7 +26,7 @@ var paddle = {
 	y     : null,
 	init: function() {
 		this.y = CANVAS_HEIGHT - this.height - this.spacer;
-		this.x = CANVAS_WIDTH / 2 - this.width / 2;
+		this.x = Math.floor(CANVAS_WIDTH / 2) - Math.floor(this.width / 2);
 	},
 	draw: function() {
 		context.fillRect(this.x, this.y, this.width, this.height);
@@ -57,8 +57,8 @@ var ball = {
 	mx    : null, // velocity in the x direction
 	my    : null, // velocity in the y direction
 	init: function() {
-		this.y  = CANVAS_HEIGHT / 2;
-		this.x  = CANVAS_WIDTH / 2;
+		this.y  = Math.floor(CANVAS_HEIGHT / 2);
+		this.x  = Math.floor(CANVAS_WIDTH / 2);
 		this.my = Math.random() * 8 - 4;
 		this.mx = Math.sqrt(this.v ** 2 - this.my ** 2)
 		if (Math.floor(Math.random() * 2) == 0) {
@@ -179,29 +179,21 @@ function startGame() {
 	context       = canvas.getContext("2d");
 	blocks        = [];
 
-	var maxBlocksPerRow = Math.floor(
-		(CANVAS_WIDTH - BLOCK_HORIZONTAL_PADDING) / (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING)
-	);
-	var maxRowsOfBlocks = Math.floor(
+	// create bricky blocks for blocky
+	var rows = Math.floor(
 		(CANVAS_HEIGHT / 2 - BLOCK_VERTICAL_PADDING) / (BLOCK_HEIGHT + BLOCK_VERTICAL_PADDING)
 	);
-	var leftBlockMargin = BLOCK_HORIZONTAL_PADDING + (
-		(CANVAS_WIDTH - maxBlocksPerRow * (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING)) / 2
-	);
-	var topBlockMargin = BLOCK_VERTICAL_PADDING;
-
-	for (var i = 0; i < maxRowsOfBlocks; i++) {
-		var rowHOffset = Math.floor(BLOCK_WIDTH / 3) * (i % 3);
-		var rowVOffset = topBlockMargin + (i * (BLOCK_HEIGHT + BLOCK_VERTICAL_PADDING));
-		// omit 1 possible block per row so we have offset space for stretcher-bond
-		// style "brickwork"
-		for (var j = 0; j < maxBlocksPerRow - 1; j++) {
-			blocks.push(new BlockConstructor(
-				leftBlockMargin + rowHOffset + (
-					j * (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING)
-				),
-				rowVOffset
-			));
+	for (var i = 0; i < rows; i++) {
+		var y = BLOCK_VERTICAL_PADDING + (i * (BLOCK_HEIGHT + BLOCK_VERTICAL_PADDING));
+		var rowOffset    = Math.floor((BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING) / 3) * (i % 3);
+		var blocksPerRow = Math.floor(
+			(CANVAS_WIDTH - BLOCK_HORIZONTAL_PADDING - rowOffset) /
+			(BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING)
+		);
+		for (var j = 0; j < blocksPerRow; j++) {
+			var x = BLOCK_HORIZONTAL_PADDING + rowOffset + (
+				j * (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING));
+			blocks.push(new BlockConstructor(x, y));
 		}
 	}
 	paddle.init();
