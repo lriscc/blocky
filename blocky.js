@@ -7,16 +7,16 @@ var BLOCK_HORIZONTAL_PADDING =   5; // horizontal space between adjacent blocks
 var BLOCK_VERTICAL_PADDING   =   5; // vertical space between adjacent blocks
 
 // Block object constructor
-function BlockConstructor(x, y) {
+function BlockConstructor(context, x, y) {
+	this.context = context;
 	// Location of top-left corner of the block
 	this.x = x;
 	this.y = y;
 	this.draw = function() {
-		context.fillRect(this.x, this.y, BLOCK_WIDTH, BLOCK_HEIGHT);
+		this.context.fillRect(this.x, this.y, BLOCK_WIDTH, BLOCK_HEIGHT);
 	}
 }
 
-var context;
 var blocks;
 var paddle = {
 	width : 75,
@@ -24,12 +24,13 @@ var paddle = {
 	spacer:  5,
 	x     : null,
 	y     : null,
-	init: function() {
+	init: function(context) {
+		this.context = context;
 		this.y = CANVAS_HEIGHT - this.height - this.spacer;
 		this.x = Math.floor(CANVAS_WIDTH / 2) - Math.floor(this.width / 2);
 	},
 	draw: function() {
-		context.fillRect(this.x, this.y, this.width, this.height);
+		this.context.fillRect(this.x, this.y, this.width, this.height);
 	},
 	move: function() {
 		if (keypad.left) {
@@ -56,7 +57,8 @@ var ball = {
 	v     : 4,    // total constant velocity of the ball
 	mx    : null, // velocity in the x direction
 	my    : null, // velocity in the y direction
-	init: function() {
+	init: function(context) {
+		this.context = context;
 		this.y  = Math.floor(CANVAS_HEIGHT / 2);
 		this.x  = Math.floor(CANVAS_WIDTH / 2);
 		this.my = Math.random() * 8 - 4;
@@ -66,9 +68,9 @@ var ball = {
 		}
 	},
 	draw: function() {
-		context.beginPath();
-		context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-		context.fill();
+		this.context.beginPath();
+		this.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+		this.context.fill();
 	},
 	move: function() {
 		// Pre-calculate new x/y position of ball assuming no collisions
@@ -193,16 +195,16 @@ function startGame() {
 		for (var j = 0; j < blocksPerRow; j++) {
 			var x = BLOCK_HORIZONTAL_PADDING + rowOffset + (
 				j * (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING));
-			blocks.push(new BlockConstructor(x, y));
+			blocks.push(new BlockConstructor(context, x, y));
 		}
 	}
-	paddle.init();
-	ball.init();
+	paddle.init(context);
+	ball.init(context);
 	keypad.init();
-	main();
+	main(context);
 }
 
-function main() {
+function main(context) {
 	context.fillStyle = "rgb(255, 0, 0)";
 
 	// Clear previous frame's drawing
@@ -230,5 +232,5 @@ function main() {
 	}
 
 	// Request to draw next frame when browser is ready:
-	requestAnimationFrame(main);
+	requestAnimationFrame(main.bind(this, context));
 }
