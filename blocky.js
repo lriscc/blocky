@@ -26,8 +26,8 @@ var paddle = {
 	x     : null,
 	y     : null,
 	init: function() {
-		this.y = canvas.height - this.height - this.spacer;
-		this.x = canvas.width / 2 - this.width / 2;
+		this.y = CANVAS_HEIGHT - this.height - this.spacer;
+		this.x = CANVAS_WIDTH / 2 - this.width / 2;
 	},
 	draw: function() {
 		context.fillRect(this.x, this.y, this.width, this.height);
@@ -41,8 +41,8 @@ var paddle = {
 			}
 		}
 		if (keypad.right) {
-			if (this.x + 5 + this.width > canvas.width) {
-				this.x = canvas.width - this.width;
+			if (this.x + 5 + this.width > CANVAS_WIDTH) {
+				this.x = CANVAS_WIDTH - this.width;
 			} else {
 				this.x += 5;
 			}
@@ -58,8 +58,8 @@ var ball = {
 	mx    : null, // velocity in the x direction
 	my    : null, // velocity in the y direction
 	init: function() {
-		this.y  = canvas.height / 2;
-		this.x  = canvas.width / 2;
+		this.y  = CANVAS_HEIGHT / 2;
+		this.x  = CANVAS_WIDTH / 2;
 		this.my = Math.random() * 8 - 4;
 		this.mx = Math.sqrt(this.v ** 2 - this.my ** 2)
 		if (Math.floor(Math.random() * 2) == 0) {
@@ -76,14 +76,14 @@ var ball = {
 		newx = this.x + this.mx;
 		oldx = this.x;
 		newy = this.y + this.my;
-		paddleTop = canvas.height - paddle.spacer - paddle.height;
+		paddleTop = CANVAS_HEIGHT - paddle.spacer - paddle.height;
 		sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
 
 		// Calculate actual new x position, taking into account possible wall collisions
-		if (newx + this.radius > canvas.width) {
+		if (newx + this.radius > CANVAS_WIDTH) {
 			// hit right wall; reflect it back
-			overlap    = newx + this.radius - canvas.width;
-			this.x     = newx = canvas.width - this.radius - overlap;
+			overlap    = newx + this.radius - CANVAS_WIDTH;
+			this.x     = newx = CANVAS_WIDTH - this.radius - overlap;
 			this.mx   *= -1;
 			sideBounce =  1;
 		} else if (newx - this.radius < 0) {
@@ -109,9 +109,9 @@ var ball = {
 				if (overlap < 0) {
 					percentage = this.my / overlap;
 					hitx = oldx + (this.mx * percentage);
-					if (sideBounce > 0 && hitx + this.radius > canvas.width) {
-						overlapX = hitx + this.radius - canvas.width;
-						hitx     = canvas.width - overlapX;
+					if (sideBounce > 0 && hitx + this.radius > CANVAS_WIDTH) {
+						overlapX = hitx + this.radius - CANVAS_WIDTH;
+						hitx     = CANVAS_WIDTH - overlapX;
 					} else if (sideBounce < 0 && hitx - this.radius < 0) {
 						hitx = this.radius - hitx;
 					}
@@ -133,7 +133,7 @@ var ball = {
 		}
 
 		// Calculate actual new y position, taking into account possible wall collisions
-		if (newy + this.radius > canvas.height) {
+		if (newy + this.radius > CANVAS_HEIGHT) {
 			// hit bottom wall: GAME OVER!
 			return true;
 		} else if (newy - this.radius < 0) {
@@ -177,21 +177,30 @@ function startGame() {
 	canvas        = document.getElementById("blocky");
 	canvas.width  = CANVAS_WIDTH;
 	canvas.height = CANVAS_HEIGHT;
-	context = canvas.getContext("2d");
-	blocks  = [];
+	context       = canvas.getContext("2d");
+	blocks        = [];
 
-	var maxBlocksPerRow = Math.floor((canvas.width - BLOCK_HORIZONTAL_PADDING) / (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING));
-	var maxRowsOfBlocks = Math.floor(((canvas.height / 2) - BLOCK_VERTICAL_PADDING) / (BLOCK_HEIGHT + BLOCK_VERTICAL_PADDING));
-	var leftBlockMargin = BLOCK_HORIZONTAL_PADDING + ((canvas.width - (maxBlocksPerRow * (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING))) / 2);
-	var topBlockMargin  = BLOCK_VERTICAL_PADDING;
+	var maxBlocksPerRow = Math.floor(
+		(CANVAS_WIDTH - BLOCK_HORIZONTAL_PADDING) / (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING)
+	);
+	var maxRowsOfBlocks = Math.floor(
+		(CANVAS_HEIGHT / 2 - BLOCK_VERTICAL_PADDING) / (BLOCK_HEIGHT + BLOCK_VERTICAL_PADDING)
+	);
+	var leftBlockMargin = BLOCK_HORIZONTAL_PADDING + (
+		(CANVAS_WIDTH - maxBlocksPerRow * (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING)) / 2
+	);
+	var topBlockMargin = BLOCK_VERTICAL_PADDING;
 
 	for (var i = 0; i < maxRowsOfBlocks; i++) {
 		var rowHOffset = Math.floor(BLOCK_WIDTH / 3) * (i % 3);
 		var rowVOffset = topBlockMargin + (i * (BLOCK_HEIGHT + BLOCK_VERTICAL_PADDING));
-		// omit 1 possible block per row so we have offset space for stretcher-bond style "brickwork"
+		// omit 1 possible block per row so we have offset space for stretcher-bond
+		// style "brickwork"
 		for (var j = 0; j < maxBlocksPerRow - 1; j++) {
 			blocks.push(new BlockConstructor(
-				leftBlockMargin + rowHOffset + (j * (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING)),
+				leftBlockMargin + rowHOffset + (
+					j * (BLOCK_WIDTH + BLOCK_HORIZONTAL_PADDING)
+				),
 				rowVOffset
 			));
 		}
@@ -206,7 +215,7 @@ function main() {
 	context.fillStyle = "rgb(255, 0, 0)";
 
 	// Clear previous frame's drawing
-	context.clearRect(0, 0, canvas.width, canvas.height);
+	context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
 	paddle.draw();
 	ball.draw();
@@ -225,7 +234,7 @@ function main() {
 		context.textBaseline = "middle";
 		context.font         = "bold 80px sans-serif";
 		context.beginPath();
-		context.fillText("GAME OVER!", canvas.width / 2, canvas.height / 2, canvas.width);
+		context.fillText("GAME OVER!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, CANVAS_WIDTH);
 		return;
 	}
 
