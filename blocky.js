@@ -24,8 +24,9 @@ var paddle = {
 	spacer:  5,
 	x     : null,
 	y     : null,
-	init: function(context) {
+	init: function(context, keypad) {
 		this.context = context;
+		this.keypad  = keypad;
 		this.y = CANVAS_HEIGHT - this.height - this.spacer;
 		this.x = Math.floor(CANVAS_WIDTH / 2) - Math.floor(this.width / 2);
 	},
@@ -33,14 +34,14 @@ var paddle = {
 		this.context.fillRect(this.x, this.y, this.width, this.height);
 	},
 	move: function() {
-		if (keypad.left) {
+		if (this.keypad.left) {
 			if (this.x - 5 < 0) {
 				this.x = 0;
 			} else {
 				this.x -= 5;
 			}
 		}
-		if (keypad.right) {
+		if (this.keypad.right) {
 			if (this.x + 5 + this.width > CANVAS_WIDTH) {
 				this.x = CANVAS_WIDTH - this.width;
 			} else {
@@ -198,9 +199,9 @@ function startGame() {
 			blocks.push(new BlockConstructor(context, x, y));
 		}
 	}
-	paddle.init(context);
-	ball.init(context);
 	keypad.init();
+	paddle.init(context, keypad);
+	ball.init(context);
 	main(context);
 }
 
