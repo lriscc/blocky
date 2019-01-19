@@ -10,6 +10,7 @@ var BLOCK_COLOR              = "rgb(62, 232, 119)";
 var PADDLE_WIDTH             =  75;
 var PADDLE_HEIGHT            =  15;
 var PADDLE_SPACER            =   5; // how far above bottom of canvas paddle should hover
+var PADDLE_COLOR             = "rgb(232, 166, 62)";
 var BALL_RADIUS              =   5;
 var BALL_MAX_VELOCITY        =   4; // pixels per frame
 
@@ -61,7 +62,10 @@ function PaddleConstructor(context, keypad) {
 	this.x       = Math.floor(CANVAS_WIDTH / 2) - Math.floor(PADDLE_WIDTH / 2);
 	this.y       = CANVAS_HEIGHT - PADDLE_HEIGHT - PADDLE_SPACER;
 	this.draw    = function() {
+		this.context.save();
+		this.context.fillStyle = PADDLE_COLOR;
 		this.context.fillRect(this.x, this.y, PADDLE_WIDTH, PADDLE_HEIGHT);
+		this.context.restore();
 	}
 	this.move = function() {
 		if (this.keypad.left) {
