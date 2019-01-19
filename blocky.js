@@ -1,4 +1,6 @@
 
+var CANVAS_WIDTH  = 600;
+var CANVAS_HEIGHT = 400;
 var BLOCK_WIDTH  = 80;
 var BLOCK_HEIGHT = 20;
 var BLOCK_HPADDING = 5; // horizontal space between adjacent blocks
@@ -170,7 +172,9 @@ var keypad = {
 }
 
 function startGame() {
-	canvas  = document.getElementById("blocky");
+	canvas        = document.getElementById("blocky");
+	canvas.width  = CANVAS_WIDTH;
+	canvas.height = CANVAS_HEIGHT;
 	context = canvas.getContext("2d");
 	blocks  = [];
 
