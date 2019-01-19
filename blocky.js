@@ -2,11 +2,6 @@
 var CANVAS_WIDTH             = 600;
 var CANVAS_HEIGHT            = 400;
 var CANVAS_BACKGROUND_COLOR  = "rgb(0, 16, 64)"; // midnight blue
-var BLOCK_WIDTH              =  80;
-var BLOCK_HEIGHT             =  20;
-var BLOCK_HORIZONTAL_PADDING =   5; // horizontal space between adjacent blocks
-var BLOCK_VERTICAL_PADDING   =   5; // vertical space between adjacent blocks
-var BLOCK_COLOR              = "rgb(62, 232, 119)";
 var PADDLE_WIDTH             =  75;
 var PADDLE_HEIGHT            =  15;
 var PADDLE_SPACER            =   5; // how far above bottom of canvas paddle should hover
@@ -14,20 +9,12 @@ var PADDLE_COLOR             = "rgb(232, 166, 62)";
 var BALL_RADIUS              =   5;
 var BALL_MAX_VELOCITY        =   4; // pixels per frame
 var BALL_COLOR               = "rgb(145, 255, 244)";
+var BLOCK_WIDTH              =  80;
+var BLOCK_HEIGHT             =  20;
+var BLOCK_HORIZONTAL_PADDING =   5; // horizontal space between adjacent blocks
+var BLOCK_VERTICAL_PADDING   =   5; // vertical space between adjacent blocks
+var BLOCK_COLOR              = "rgb(62, 232, 119)";
 
-// Block object constructor
-function BlockConstructor(context, x, y) {
-	this.context = context;
-	// Location of top-left corner of the block
-	this.x = x;
-	this.y = y;
-	this.draw = function() {
-		this.context.save();
-		this.context.fillStyle = BLOCK_COLOR;
-		this.context.fillRect(this.x, this.y, BLOCK_WIDTH, BLOCK_HEIGHT);
-		this.context.restore();
-	}
-}
 
 // Keypad object constructor
 function KeypadConstructor() {
@@ -55,6 +42,7 @@ function KeypadConstructor() {
 	document.addEventListener("keydown", this.pressed.bind(this), false);
 	document.addEventListener("keyup", this.released.bind(this), false);
 }
+
 
 // Paddle object constructor
 function PaddleConstructor(context, keypad) {
@@ -85,6 +73,7 @@ function PaddleConstructor(context, keypad) {
 		}
 	}
 }
+
 
 // Ball object constructor
 function BallConstructor(context, paddle) {
@@ -184,6 +173,22 @@ function BallConstructor(context, paddle) {
 	}
 }
 
+
+// Block object constructor
+function BlockConstructor(context, x, y) {
+	this.context = context;
+	// Location of top-left corner of the block
+	this.x = x;
+	this.y = y;
+	this.draw = function() {
+		this.context.save();
+		this.context.fillStyle = BLOCK_COLOR;
+		this.context.fillRect(this.x, this.y, BLOCK_WIDTH, BLOCK_HEIGHT);
+		this.context.restore();
+	}
+}
+
+
 function startGame() {
 	// Get HTML DOM elements (<canvas id="blocky">) and associated 2D drawing context
 	var canvas    = document.getElementById("blocky");
@@ -214,6 +219,7 @@ function startGame() {
 	}
 	nextFrame(context, paddle, ball, blocks);
 }
+
 
 function nextFrame(context, paddle, ball, blocks) {
 
@@ -247,3 +253,4 @@ function nextFrame(context, paddle, ball, blocks) {
 	// Request to draw next frame when browser is ready:
 	requestAnimationFrame(nextFrame.bind(this, context, paddle, ball, blocks));
 }
+
