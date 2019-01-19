@@ -17,7 +17,32 @@ function BlockConstructor(context, x, y) {
 	}
 }
 
-var blocks;
+// Keypad object constructor
+function KeypadConstructor() {
+	this.left  = false;
+	this.right = false;
+	this.init  = function() {
+		document.addEventListener("keydown", this.pressed.bind(this), false);
+		document.addEventListener("keyup", this.released.bind(this), false);
+	}
+	this.pressed = function (event) {
+		if (event.keyCode == 37) {
+			this.left = true;
+		}
+		if (event.keyCode == 39) {
+			this.right = true;
+		}
+	}
+	this.released = function (event) {
+		if (event.keyCode == 37) {
+			this.left = false;
+		}
+		if (event.keyCode == 39) {
+			this.right = false;
+		}
+	}
+}
+
 var paddle = {
 	width : 75,
 	height: 15,
@@ -150,37 +175,13 @@ var ball = {
 	},
 };
 
-var keypad = {
-	left   : false,
-	right  : false,
-	init   : function() {
-		document.addEventListener("keydown", this.pressed.bind(this), false);
-		document.addEventListener("keyup", this.released.bind(this), false);
-	},
-	pressed: function (event) {
-		if (event.keyCode == 37) {
-			this.left = true;
-		}
-		if (event.keyCode == 39) {
-			this.right = true;
-		}
-	},
-	released: function (event) {
-		if (event.keyCode == 37) {
-			this.left = false;
-		}
-		if (event.keyCode == 39) {
-			this.right = false;
-		}
-	},
-}
-
 function startGame() {
+	var keypad    = new KeypadConstructor()
 	var canvas    = document.getElementById("blocky");
+	var blocks    = [];
 	canvas.width  = CANVAS_WIDTH;
 	canvas.height = CANVAS_HEIGHT;
 	context       = canvas.getContext("2d");
-	blocks        = [];
 
 	// create bricky blocks for blocky
 	var rows = Math.floor(
@@ -202,10 +203,10 @@ function startGame() {
 	keypad.init();
 	paddle.init(context, keypad);
 	ball.init(context);
-	main(context);
+	main(context, paddle, ball, blocks);
 }
 
-function main(context) {
+function main(context, paddle, ball, blocks) {
 	context.fillStyle = "rgb(255, 0, 0)";
 
 	// Clear previous frame's drawing
@@ -233,5 +234,5 @@ function main(context) {
 	}
 
 	// Request to draw next frame when browser is ready:
-	requestAnimationFrame(main.bind(this, context));
+	requestAnimationFrame(main.bind(this, context, paddle, ball, blocks));
 }
