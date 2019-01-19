@@ -16,7 +16,6 @@ function BlockConstructor(x, y) {
 	}
 }
 
-var canvas;
 var context;
 var blocks;
 var paddle = {
@@ -174,7 +173,7 @@ var keypad = {
 }
 
 function startGame() {
-	canvas        = document.getElementById("blocky");
+	var canvas    = document.getElementById("blocky");
 	canvas.width  = CANVAS_WIDTH;
 	canvas.height = CANVAS_HEIGHT;
 	context       = canvas.getContext("2d");
