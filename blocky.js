@@ -5,6 +5,9 @@ var BLOCK_WIDTH              =  80;
 var BLOCK_HEIGHT             =  20;
 var BLOCK_HORIZONTAL_PADDING =   5; // horizontal space between adjacent blocks
 var BLOCK_VERTICAL_PADDING   =   5; // vertical space between adjacent blocks
+var PADDLE_WIDTH             =  75;
+var PADDLE_HEIGHT            =  15;
+var PADDLE_SPACER            =   5; // how far above bottom of canvas paddle should hover
 
 // Block object constructor
 function BlockConstructor(context, x, y) {
@@ -21,10 +24,7 @@ function BlockConstructor(context, x, y) {
 function KeypadConstructor() {
 	this.left  = false;
 	this.right = false;
-	this.init  = function() {
-		document.addEventListener("keydown", this.pressed.bind(this), false);
-		document.addEventListener("keyup", this.released.bind(this), false);
-	}
+
 	this.pressed = function (event) {
 		if (event.keyCode == 37) {
 			this.left = true;
@@ -33,6 +33,7 @@ function KeypadConstructor() {
 			this.right = true;
 		}
 	}
+
 	this.released = function (event) {
 		if (event.keyCode == 37) {
 			this.left = false;
@@ -41,24 +42,20 @@ function KeypadConstructor() {
 			this.right = false;
 		}
 	}
+
+	document.addEventListener("keydown", this.pressed.bind(this), false);
+	document.addEventListener("keyup", this.released.bind(this), false);
 }
 
-var paddle = {
-	width : 75,
-	height: 15,
-	spacer:  5,
-	x     : null,
-	y     : null,
-	init: function(context, keypad) {
-		this.context = context;
-		this.keypad  = keypad;
-		this.y = CANVAS_HEIGHT - this.height - this.spacer;
-		this.x = Math.floor(CANVAS_WIDTH / 2) - Math.floor(this.width / 2);
-	},
-	draw: function() {
-		this.context.fillRect(this.x, this.y, this.width, this.height);
-	},
-	move: function() {
+function PaddleConstructor(context, keypad) {
+	this.context = context;
+	this.keypad  = keypad;
+	this.x       = Math.floor(CANVAS_WIDTH / 2) - Math.floor(PADDLE_WIDTH / 2);
+	this.y       = CANVAS_HEIGHT - PADDLE_HEIGHT - PADDLE_SPACER;
+	this.draw    = function() {
+		this.context.fillRect(this.x, this.y, PADDLE_WIDTH, PADDLE_HEIGHT);
+	}
+	this.move = function() {
 		if (this.keypad.left) {
 			if (this.x - 5 < 0) {
 				this.x = 0;
@@ -67,14 +64,14 @@ var paddle = {
 			}
 		}
 		if (this.keypad.right) {
-			if (this.x + 5 + this.width > CANVAS_WIDTH) {
-				this.x = CANVAS_WIDTH - this.width;
+			if (this.x + 5 + PADDLE_WIDTH > CANVAS_WIDTH) {
+				this.x = CANVAS_WIDTH - PADDLE_WIDTH;
 			} else {
 				this.x += 5;
 			}
 		}
-	},
-};
+	}
+}
 
 var ball = {
 	radius: 5,
@@ -83,8 +80,9 @@ var ball = {
 	v     : 4,    // total constant velocity of the ball
 	mx    : null, // velocity in the x direction
 	my    : null, // velocity in the y direction
-	init: function(context) {
+	init: function(context, paddle) {
 		this.context = context;
+		this.paddle  = paddle;
 		this.y  = Math.floor(CANVAS_HEIGHT / 2);
 		this.x  = Math.floor(CANVAS_WIDTH / 2);
 		this.my = Math.random() * 8 - 4;
@@ -103,7 +101,7 @@ var ball = {
 		newx = this.x + this.mx;
 		oldx = this.x;
 		newy = this.y + this.my;
-		paddleTop = CANVAS_HEIGHT - paddle.spacer - paddle.height;
+		paddleTop = CANVAS_HEIGHT - PADDLE_SPACER - PADDLE_HEIGHT;
 		sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
 
 		// Calculate actual new x position, taking into account possible wall collisions
@@ -142,14 +140,14 @@ var ball = {
 					} else if (sideBounce < 0 && hitx - this.radius < 0) {
 						hitx = this.radius - hitx;
 					}
-					if (hitx >= paddle.x && hitx <= paddle.x + paddle.width) {
+					if (hitx >= this.paddle.x && hitx <= this.paddle.x + PADDLE_WIDTH) {
 						// Bounce off paddle and handle Y movement
 						this.y   = paddleTop - overlap - this.radius;
 						this.my *= -1;
 						return false;
 					}
 				} else { // we expect overlap to be exactly 0 in this case
-					if (newx >= paddle.x && newx <= paddle.x + paddle.width) {
+					if (newx >= this.paddle.x && newx <= this.paddle.x + PADDLE_WIDTH) {
 						// Bounce off paddle and handle Y movement
 						this.y   = newy;
 						this.my *= -1;
@@ -176,12 +174,13 @@ var ball = {
 };
 
 function startGame() {
-	var keypad    = new KeypadConstructor()
+	var keypad    = new KeypadConstructor();
 	var canvas    = document.getElementById("blocky");
 	var blocks    = [];
 	canvas.width  = CANVAS_WIDTH;
 	canvas.height = CANVAS_HEIGHT;
 	context       = canvas.getContext("2d");
+	var paddle    = new PaddleConstructor(context, keypad);
 
 	// create bricky blocks for blocky
 	var rows = Math.floor(
@@ -200,9 +199,7 @@ function startGame() {
 			blocks.push(new BlockConstructor(context, x, y));
 		}
 	}
-	keypad.init();
-	paddle.init(context, keypad);
-	ball.init(context);
+	ball.init(context, paddle);
 	main(context, paddle, ball, blocks);
 }
 
