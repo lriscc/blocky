@@ -228,14 +228,14 @@ function moveObjects(paddle, ball, blocks) {
 				} else if (sideBounce < 0 && hitx - BALL_RADIUS < 0) {
 					hitx = BALL_RADIUS - hitx;
 				}
-				if (hitx >= ball.paddle.x && hitx <= ball.paddle.x + PADDLE_WIDTH) {
+				if (hitx >= paddle.x && hitx <= paddle.x + PADDLE_WIDTH) {
 					// Bounce off paddle and handle Y movement
 					ball.y   = paddleTop - overlap - BALL_RADIUS;
 					ball.vy *= -1;
 					return false;
 				}
 			} else { // we expect overlap to be exactly 0 in this case
-				if (newx >= ball.paddle.x && newx <= ball.paddle.x + PADDLE_WIDTH) {
+				if (newx >= paddle.x && newx <= paddle.x + PADDLE_WIDTH) {
 					// Bounce off paddle and handle Y movement
 					ball.y   = newy;
 					ball.vy *= -1;
