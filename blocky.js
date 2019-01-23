@@ -77,9 +77,8 @@ function PaddleConstructor(context, keypad) {
 
 
 // Ball object constructor
-function BallConstructor(context, paddle) {
+function BallConstructor(context) {
 	this.context = context;
-	this.paddle  = paddle;
 	this.y       = Math.floor(CANVAS_HEIGHT / 2);
 	this.x       = Math.floor(CANVAS_WIDTH / 2);
 	this.vy      = Math.random() * 2 * BALL_MAX_VELOCITY - BALL_MAX_VELOCITY;
@@ -125,7 +124,7 @@ function startGame() {
 	// Create out main game elements (a keypad controller, paddle, ball, and some blocks)
 	var keypad    = new KeypadConstructor();
 	var paddle    = new PaddleConstructor(context, keypad);
-	var ball      = new BallConstructor(context, paddle);
+	var ball      = new BallConstructor(context);
 	var blocks    = [];
 	var rows      = Math.floor(
 		(CANVAS_HEIGHT / 2 - BLOCK_VERTICAL_PADDING) / (BLOCK_HEIGHT + BLOCK_VERTICAL_PADDING)
