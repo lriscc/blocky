@@ -51,12 +51,15 @@ function PaddleConstructor(context, keypad) {
 	this.keypad  = keypad;
 	this.x       = Math.floor(CANVAS_WIDTH / 2) - Math.floor(PADDLE_WIDTH / 2);
 	this.y       = CANVAS_HEIGHT - PADDLE_HEIGHT - PADDLE_SPACER;
-	this.draw    = function() {
+
+	this.draw = function() {
 		this.context.save();
 		this.context.fillStyle = PADDLE_COLOR;
-		this.context.fillRect(this.x, this.y, PADDLE_WIDTH, PADDLE_HEIGHT);
+		this.context.fillRect(Math.floor(this.x), Math.floor(this.y),
+			PADDLE_WIDTH, PADDLE_HEIGHT);
 		this.context.restore();
 	}
+
 	this.move = function() {
 		if (this.keypad.left) {
 			if (this.x - 5 < 0) {
