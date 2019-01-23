@@ -178,23 +178,17 @@ function moveObjects(paddle, ball, blocks) {
 	//
 	// If we return true, that indicates to the caller that the game is over. Otherwise the game
 	// should continue.
+	var partialX, overlapX, overlapY;
+	var percentage;
+	var sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
+	var oldX = ball.x;
+	var oldY = ball.y;
 
 	// Just move the paddle now according to keyboard input
 	paddle.move();
 
-	// Save off the ball's original position for later reference and move it optimistically now
-	var oldX = ball.x;
-	var oldY = ball.y;
+	// Move the ball optimistically (we'll adjust it's position/velocity if there's a collision)
 	ball.move();
-
-	// Now let's figure out what the ball might hit, what the results should be, and what it's
-	// new position should be.
-
-	// Pre-calculate new x/y position of ball assuming no collisions
-	var hitx;
-	var overlapX, overlapY;
-	var percentage;
-	var sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
 
 	// Calculate actual new x position, taking into account possible wall collisions
 	if (ball.x + BALL_RADIUS > CANVAS_WIDTH) {
@@ -222,17 +216,17 @@ function moveObjects(paddle, ball, blocks) {
 			overlapY = ball.y + BALL_RADIUS - paddle.y;
 			if (overlapY > 0) {
 				percentage = ball.vy / overlapY;
-				hitx = oldX + (ball.vx * percentage);
+				partialX   = oldX + (ball.vx * percentage);
 				if (sideBounce != 0) {
-					hitx = oldX + (ball.vx * -1 * percentage);
+					partialX = oldX + (ball.vx * -1 * percentage);
 				}
-				if (sideBounce > 0 && hitx + BALL_RADIUS > CANVAS_WIDTH) {
-					overlapX = hitx + BALL_RADIUS - CANVAS_WIDTH;
-					hitx     = CANVAS_WIDTH - overlapX;
-				} else if (sideBounce < 0 && hitx - BALL_RADIUS < 0) {
-					hitx = BALL_RADIUS - hitx;
+				if (sideBounce > 0 && partialX + BALL_RADIUS > CANVAS_WIDTH) {
+					overlapX = partialX + BALL_RADIUS - CANVAS_WIDTH;
+					partialX = CANVAS_WIDTH - overlapX;
+				} else if (sideBounce < 0 && partialX - BALL_RADIUS < 0) {
+					partialX = BALL_RADIUS - partialX;
 				}
-				if (hitx >= paddle.x && hitx <= paddle.x + PADDLE_WIDTH) {
+				if (partialX >= paddle.x && partialX <= paddle.x + PADDLE_WIDTH) {
 					// Bounce off paddle and handle Y movement
 					ball.y   = paddle.y - overlapY - BALL_RADIUS;
 					ball.vy *= -1;
