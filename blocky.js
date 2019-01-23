@@ -92,7 +92,7 @@ function BallConstructor(context) {
 		this.context.save();
 		this.context.fillStyle = BALL_COLOR;
 		this.context.beginPath();
-		this.context.arc(this.x, this.y, BALL_RADIUS, 0, 2 * Math.PI);
+		this.context.arc(Math.floor(this.x), Math.floor(this.y), BALL_RADIUS, 0, 2 * Math.PI);
 		this.context.fill();
 		this.context.restore();
 
