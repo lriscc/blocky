@@ -8,7 +8,7 @@ var PADDLE_HEIGHT            =  15;
 var PADDLE_SPACER            =   5; // how far above bottom of canvas paddle should hover
 var PADDLE_COLOR             = "rgb(232, 166, 62)";
 var BALL_RADIUS              =   5;
-var BALL_MAX_VELOCITY        =   4; // pixels per frame
+var BALL_VELOCITY            =   4; // pixels per frame
 var BALL_COLOR               = "rgb(145, 255, 244)";
 var BLOCK_WIDTH              =  80;
 var BLOCK_HEIGHT             =  20;
@@ -81,14 +81,12 @@ function PaddleConstructor(context, keypad) {
 
 // Ball object constructor
 function BallConstructor(context) {
+	var startingAngle = Math.random() * 2 * Math.PI; // random angle in radians
 	this.context = context;
 	this.y       = Math.floor(CANVAS_HEIGHT / 2);
 	this.x       = Math.floor(CANVAS_WIDTH / 2);
-	this.vy      = Math.random() * 2 * BALL_MAX_VELOCITY - BALL_MAX_VELOCITY;
-	this.vx      = Math.sqrt(BALL_MAX_VELOCITY ** 2 - this.vy ** 2);
-	if (Math.floor(Math.random() * 2) == 0) {
-		this.vx *= -1;
-	}
+	this.vy      = Math.sin(startingAngle) * BALL_VELOCITY;
+	this.vx      = Math.cos(startingAngle) * BALL_VELOCITY;
 
 	this.draw = function() {
 		this.context.save();
