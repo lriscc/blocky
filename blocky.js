@@ -231,6 +231,29 @@ function moveObjects(paddle, ball, blocks) {
 	// Move the ball optimistically (we'll adjust it's position/velocity if there's a collision)
 	ball.move();
 
+	// If ball's movement put's it in a clean position, we're done
+	var ballInBounds       = ball.inBounds();
+	var ballTouchingPaddle = ball.touchingPaddle(paddle);
+	var ballTouchingBlocks = ball.touchingBlocks(blocks);
+	if (ballInBounds && !ballTouchingPaddle && !ballTouchingBlocks) {
+		return false; // no more checking to do; game not over
+	}
+
+	// If ball has already hit or crossed the bottom canvas boundary we're _probably_ done
+	if (!ballInBounds && ball.y + BALL_RADIUS > CANVAS_HEIGHT) {
+		// If center of ball had already passed paddle's top when frame began, it's over.
+		// Otherwise, if we didn't have a paddle collision, it's over.
+		if (oldY >= paddle.y || !ballTouchingPaddle) {
+			return true; // Game over
+		}
+		// If we made it here, the ball's starting position this frame had the middle of
+		// the ball above the top of the paddle, _and_ we're currently overlapping/touching
+		// the paddle. So, process this collision:
+		// TODO: perform this edge-case collision if/when we care (this is an unlikely event)
+		console.log("TODO: edge-case #1 hit; perhaps it's not as unlikely as we thought.");
+		return true; // Ending game
+	}
+
 	// Calculate actual new x position, taking into account possible wall collisions
 	if (ball.x + BALL_RADIUS > CANVAS_WIDTH) {
 		// hit right wall; reflect it back
