@@ -120,7 +120,7 @@ function startGame() {
 	var canvas    = document.getElementById("blocky");
 	canvas.width  = CANVAS_WIDTH;  // update HTML <canvas> element's width
 	canvas.height = CANVAS_HEIGHT; // update HTML <canvas> element's height
-	context       = canvas.getContext("2d");
+	var context   = canvas.getContext("2d");
 
 	// Create out main game elements (a keypad controller, paddle, ball, and some blocks)
 	var keypad    = new KeypadConstructor();
@@ -182,11 +182,15 @@ function moveObjects(paddle, ball, blocks) {
 	// new position should be.
 
 	// Pre-calculate new x/y position of ball assuming no collisions
-	newx = ball.x + ball.vx;
-	oldx = ball.x;
-	newy = ball.y + ball.vy;
-	paddleTop = CANVAS_HEIGHT - PADDLE_SPACER - PADDLE_HEIGHT;
-	sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
+	var hitx;
+	var overlap, overlapX;
+	var bottomHeight;
+	var percentage;
+	var newx = ball.x + ball.vx;
+	var oldx = ball.x;
+	var newy = ball.y + ball.vy;
+	var paddleTop = CANVAS_HEIGHT - PADDLE_SPACER - PADDLE_HEIGHT;
+	var sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
 
 	// Calculate actual new x position, taking into account possible wall collisions
 	if (newx + BALL_RADIUS > CANVAS_WIDTH) {
