@@ -182,6 +182,10 @@ function moveObjects(paddle, ball, blocks) {
 	// Just move the paddle now according to keyboard input
 	paddle.move();
 
+	// Save off the ball's original position for later reference
+	var oldX = ball.x;
+	var oldY = ball.y;
+
 	// Now let's figure out what the ball might hit, what the results should be, and what it's
 	// new position should be.
 
@@ -191,7 +195,6 @@ function moveObjects(paddle, ball, blocks) {
 	var bottomHeight;
 	var percentage;
 	var newx = ball.x + ball.vx;
-	var oldx = ball.x;
 	var newy = ball.y + ball.vy;
 	var paddleTop = CANVAS_HEIGHT - PADDLE_SPACER - PADDLE_HEIGHT;
 	var sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
@@ -225,7 +228,7 @@ function moveObjects(paddle, ball, blocks) {
 			overlap      = bottomHeight - paddleTop;
 			if (overlap < 0) {
 				percentage = ball.vy / overlap;
-				hitx = oldx + (ball.vx * percentage);
+				hitx = oldX + (ball.vx * percentage);
 				if (sideBounce > 0 && hitx + BALL_RADIUS > CANVAS_WIDTH) {
 					overlapX = hitx + BALL_RADIUS - CANVAS_WIDTH;
 					hitx     = CANVAS_WIDTH - overlapX;
