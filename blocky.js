@@ -96,6 +96,11 @@ function BallConstructor(context) {
 		this.context.restore();
 
 	}
+
+	this.move = function() {
+		this.x += this.vx;
+		this.y += this.vy;
+	}
 }
 
 
