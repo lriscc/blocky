@@ -99,8 +99,48 @@ function BallConstructor(context) {
 	}
 
 	this.move = function() {
+		// Optimistically move ball (as if there are no collisions)
 		this.x += this.vx;
 		this.y += this.vy;
+	}
+
+	this.inBounds = function() {
+		// Return true if current position is fully within the canvas
+		if (this.x - BALL_RADIUS < 0) {
+			return false; // outside left boundary
+		}
+		if (this.x + BALL_RADIUS > CANVAS_WIDTH) {
+			return false; // outside right boundary
+		}
+		if (this.y - BALL_RADIUS < 0) {
+			return false; // outside top boundary
+		}
+		if (this.y + BALL_RADIUS > CANVAS_HEIGHT) {
+			return false; // outside bottom boundary
+		}
+		return true;
+	}
+
+	this.touchingPaddle = function(paddle) {
+		// Return true if ball touching/intersecting paddle at all
+		return circleTouchingRectangle(this.x, this.y, BALL_RADIUS,
+			paddle.x, paddle.y, PADDLE_WIDTH, PADDLE_HEIGHT);
+	}
+
+	this.touchingBlocks = function(blocks) {
+		// Return array of all blocks that ball is touching/intersecting or null if it's
+		// not touching/intersecting any of the blocks
+		var touching = [];
+		for (var i = 0; i < blocks.length; i++) {
+			if (circleTouchingRectangle(this.x, this.y, BALL_RADIUS,
+				blocks[i].x, blocks[i].y, BLOCK_WIDTH, BLOCK_HEIGHT)) {
+				touching.push(blocks[i]);
+			}
+		}
+		if (touching.length > 0) {
+			return touching;
+		}
+		return null;
 	}
 }
 
