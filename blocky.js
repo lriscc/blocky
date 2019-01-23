@@ -192,7 +192,7 @@ function moveObjects(paddle, ball, blocks) {
 
 	// Pre-calculate new x/y position of ball assuming no collisions
 	var hitx;
-	var overlap, overlapX;
+	var overlapX, overlapY;
 	var bottomHeight;
 	var percentage;
 	var sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
@@ -200,14 +200,14 @@ function moveObjects(paddle, ball, blocks) {
 	// Calculate actual new x position, taking into account possible wall collisions
 	if (ball.x + BALL_RADIUS > CANVAS_WIDTH) {
 		// hit right wall; reflect it back
-		overlap    = ball.x + BALL_RADIUS - CANVAS_WIDTH;
-		ball.x     = CANVAS_WIDTH - BALL_RADIUS - overlap;
+		overlapX   = ball.x + BALL_RADIUS - CANVAS_WIDTH;
+		ball.x     = CANVAS_WIDTH - BALL_RADIUS - overlapX;
 		ball.vx   *= -1;
 		sideBounce =  1;
 	} else if (ball.x - BALL_RADIUS < 0) {
 		// hit left wall; reflect it back
-		overlap    = BALL_RADIUS - ball.x;
-		ball.x     = BALL_RADIUS + overlap;
+		overlapX   = BALL_RADIUS - ball.x;
+		ball.x     = BALL_RADIUS + overlapX;
 		ball.vx   *= -1;
 		sideBounce = -1;
 	}
@@ -221,9 +221,9 @@ function moveObjects(paddle, ball, blocks) {
 			// Okay, where exactly was the ball (left/right) when it was at the
 			// paddle top height?
 			bottomHeight = ball.y + BALL_RADIUS;
-			overlap      = bottomHeight - paddle.y;
-			if (overlap > 0) {
-				percentage = ball.vy / overlap;
+			overlapY     = bottomHeight - paddle.y;
+			if (overlapY > 0) {
+				percentage = ball.vy / overlapY;
 				hitx = oldX + (ball.vx * percentage);
 				if (sideBounce != 0) {
 					hitx = oldX + (ball.vx * -1 * percentage);
@@ -236,11 +236,11 @@ function moveObjects(paddle, ball, blocks) {
 				}
 				if (hitx >= paddle.x && hitx <= paddle.x + PADDLE_WIDTH) {
 					// Bounce off paddle and handle Y movement
-					ball.y   = paddle.y - overlap - BALL_RADIUS;
+					ball.y   = paddle.y - overlapY - BALL_RADIUS;
 					ball.vy *= -1;
 					return false;
 				}
-			} else { // we expect overlap to be exactly 0 in this case
+			} else { // we expect overlapY to be exactly 0 in this case
 				if (ball.x >= paddle.x && ball.x <= paddle.x + PADDLE_WIDTH) {
 					// Bounce off paddle
 					ball.vy *= -1;
@@ -256,8 +256,8 @@ function moveObjects(paddle, ball, blocks) {
 		return true;
 	} else if (ball.y - BALL_RADIUS < 0) {
 		// hit top wall; reflect it back
-		overlap  = BALL_RADIUS - ball.y;
-		ball.y   = BALL_RADIUS + overlap;
+		overlapY = BALL_RADIUS - ball.y;
+		ball.y   = BALL_RADIUS + overlapY;
 		ball.vy *= -1;
 	}
 	return false;
