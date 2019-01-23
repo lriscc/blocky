@@ -193,7 +193,6 @@ function moveObjects(paddle, ball, blocks) {
 	// Pre-calculate new x/y position of ball assuming no collisions
 	var hitx;
 	var overlapX, overlapY;
-	var bottomHeight;
 	var percentage;
 	var sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
 
@@ -220,8 +219,7 @@ function moveObjects(paddle, ball, blocks) {
 		if (oldY + BALL_RADIUS < paddle.y) {
 			// Okay, where exactly was the ball (left/right) when it was at the
 			// paddle top height?
-			bottomHeight = ball.y + BALL_RADIUS;
-			overlapY     = bottomHeight - paddle.y;
+			overlapY = ball.y + BALL_RADIUS - paddle.y;
 			if (overlapY > 0) {
 				percentage = ball.vy / overlapY;
 				hitx = oldX + (ball.vx * percentage);
