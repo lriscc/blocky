@@ -179,7 +179,7 @@ function moveObjects(paddle, ball, blocks) {
 	//
 	// If we return true, that indicates to the caller that the game is over. Otherwise the game
 	// should continue.
-	var partialX, overlapX, overlapY;
+	var partialX, reboundX, reboundY;
 	var percentage;
 	var sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
 	var oldX = ball.x;
@@ -194,14 +194,14 @@ function moveObjects(paddle, ball, blocks) {
 	// Calculate actual new x position, taking into account possible wall collisions
 	if (ball.x + BALL_RADIUS > CANVAS_WIDTH) {
 		// hit right wall; reflect it back
-		overlapX   = ball.x + BALL_RADIUS - CANVAS_WIDTH;
-		ball.x     = CANVAS_WIDTH - BALL_RADIUS - overlapX;
+		reboundX   = ball.x + BALL_RADIUS - CANVAS_WIDTH;
+		ball.x     = CANVAS_WIDTH - BALL_RADIUS - reboundX;
 		ball.vx   *= -1;
 		sideBounce =  1;
 	} else if (ball.x - BALL_RADIUS < 0) {
 		// hit left wall; reflect it back
-		overlapX   = BALL_RADIUS - ball.x;
-		ball.x     = BALL_RADIUS + overlapX;
+		reboundX   = BALL_RADIUS - ball.x;
+		ball.x     = BALL_RADIUS + reboundX;
 		ball.vx   *= -1;
 		sideBounce = -1;
 	}
@@ -214,26 +214,26 @@ function moveObjects(paddle, ball, blocks) {
 		if (oldY + BALL_RADIUS < paddle.y) {
 			// Okay, where exactly was the ball (left/right) when it was at the
 			// paddle top height?
-			overlapY = ball.y + BALL_RADIUS - paddle.y;
-			if (overlapY > 0) {
-				percentage = ball.vy / overlapY;
+			reboundY = ball.y + BALL_RADIUS - paddle.y;
+			if (reboundY > 0) {
+				percentage = ball.vy / reboundY;
 				partialX   = oldX + (ball.vx * percentage);
 				if (sideBounce != 0) {
 					partialX = oldX + (ball.vx * -1 * percentage);
 				}
 				if (sideBounce > 0 && partialX + BALL_RADIUS > CANVAS_WIDTH) {
-					overlapX = partialX + BALL_RADIUS - CANVAS_WIDTH;
-					partialX = CANVAS_WIDTH - overlapX;
+					reboundX = partialX + BALL_RADIUS - CANVAS_WIDTH;
+					partialX = CANVAS_WIDTH - reboundX;
 				} else if (sideBounce < 0 && partialX - BALL_RADIUS < 0) {
 					partialX = BALL_RADIUS - partialX;
 				}
 				if (partialX >= paddle.x && partialX <= paddle.x + PADDLE_WIDTH) {
 					// Bounce off paddle and handle Y movement
-					ball.y   = paddle.y - overlapY - BALL_RADIUS;
+					ball.y   = paddle.y - reboundY - BALL_RADIUS;
 					ball.vy *= -1;
 					return false;
 				}
-			} else { // we expect overlapY to be exactly 0 in this case
+			} else { // we expect reboundY to be exactly 0 in this case
 				if (ball.x >= paddle.x && ball.x <= paddle.x + PADDLE_WIDTH) {
 					// Bounce off paddle
 					ball.vy *= -1;
@@ -249,8 +249,8 @@ function moveObjects(paddle, ball, blocks) {
 		return true;
 	} else if (ball.y - BALL_RADIUS < 0) {
 		// hit top wall; reflect it back
-		overlapY = BALL_RADIUS - ball.y;
-		ball.y   = BALL_RADIUS + overlapY;
+		reboundY = BALL_RADIUS - ball.y;
+		ball.y   = BALL_RADIUS + reboundY;
 		ball.vy *= -1;
 	}
 	return false;
