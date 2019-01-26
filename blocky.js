@@ -221,7 +221,6 @@ function moveObjects(paddle, ball, blocks) {
 	// should continue.
 	var partialX, reboundX, reboundY;
 	var percentage;
-	var sideBounce = 0; // 0 means didn't bounce off wall, -1 means left, 1 means right
 	var oldX = ball.x;
 	var oldY = ball.y;
 
@@ -239,19 +238,51 @@ function moveObjects(paddle, ball, blocks) {
 		return false; // no more checking to do; game not over
 	}
 
-	// If ball has already hit or crossed the bottom canvas boundary we're _probably_ done
-	if (!ballInBounds && ball.y + BALL_RADIUS > CANVAS_HEIGHT) {
-		// If center of ball had already passed paddle's top when frame began, it's over.
-		// Otherwise, if we didn't have a paddle collision, it's over.
-		if (oldY >= paddle.y || !ballTouchingPaddle) {
-			return true; // Game over
+	// Performce simple wall collision cases
+	if (!ballInBounds) {
+		// If ball has already hit or crossed the bottom canvas boundary we're _probably_ done
+		if (ball.y + BALL_RADIUS > CANVAS_HEIGHT) {
+			// If center of ball had already passed paddle's top when frame began, it's over.
+			// Otherwise, if we didn't have a paddle collision, it's over.
+			if (oldY >= paddle.y || !ballTouchingPaddle) {
+				return true; // Game over
+			}
+			// If we made it here, the ball's starting position this frame had the middle of
+			// the ball above the top of the paddle, _and_ we're currently overlapping or
+			// touching the paddle. So, process this collision:
+			// TODO: perform this collision if/when we care (this is an unlikely event)
+			console.log("TODO: edge-case #1; perhaps it's not as unlikely as we thought.");
+			return true; // Ending game
 		}
-		// If we made it here, the ball's starting position this frame had the middle of
-		// the ball above the top of the paddle, _and_ we're currently overlapping/touching
-		// the paddle. So, process this collision:
-		// TODO: perform this edge-case collision if/when we care (this is an unlikely event)
-		console.log("TODO: edge-case #1 hit; perhaps it's not as unlikely as we thought.");
-		return true; // Ending game
+
+		// As we said above, let's only process _simple_ wall collision cases
+		if (!ballTouchingPaddle && !ballTouchingBlocks) {
+			// Did we collide with one of the side walls?
+			if (ball.x + BALL_RADIUS > CANVAS_WIDTH) {
+				// hit right wall; reflect it back
+				reboundX = ball.x + BALL_RADIUS - CANVAS_WIDTH;
+				ball.x  -= reboundX * 2;
+				ball.vx *= -1;
+			} else if (ball.x - BALL_RADIUS < 0) {
+				// hit left wall; reflect it back
+				reboundX = BALL_RADIUS - ball.x;
+				ball.x  += reboundX * 2;
+				ball.vx *= -1;
+			}
+
+			// Did we collide with top or bottom walls?
+			if (ball.y + BALL_RADIUS > CANVAS_HEIGHT) {
+				// hit bottom wall: GAME OVER! (should have been handled above)
+				console.log("ERROR: hit unexpected code-path #1; something is weird");
+				return true;
+			} else if (ball.y - BALL_RADIUS < 0) {
+				// hit top wall; reflect it back
+				reboundY = BALL_RADIUS - ball.y;
+				ball.y  += reboundY * 2;
+				ball.vy *= -1;
+			}
+			return false; // done moving ball; game not over
+		}
 	}
 
 	// Handle paddle collision
@@ -316,32 +347,6 @@ function moveObjects(paddle, ball, blocks) {
 		ball.vy = Math.sin(startingAngle) * BALL_VELOCITY;
 		ball.vx = Math.cos(startingAngle) * BALL_VELOCITY;
 		return false; // done moving ball; game not over
-	}
-
-	// Calculate actual new x position, taking into account possible wall collisions
-	if (ball.x + BALL_RADIUS > CANVAS_WIDTH) {
-		// hit right wall; reflect it back
-		reboundX   = ball.x + BALL_RADIUS - CANVAS_WIDTH;
-		ball.x     = CANVAS_WIDTH - BALL_RADIUS - reboundX;
-		ball.vx   *= -1;
-		sideBounce =  1;
-	} else if (ball.x - BALL_RADIUS < 0) {
-		// hit left wall; reflect it back
-		reboundX   = BALL_RADIUS - ball.x;
-		ball.x     = BALL_RADIUS + reboundX;
-		ball.vx   *= -1;
-		sideBounce = -1;
-	}
-
-	// Calculate actual new y position, taking into account possible wall collisions
-	if (ball.y + BALL_RADIUS > CANVAS_HEIGHT) {
-		// hit bottom wall: GAME OVER!
-		return true;
-	} else if (ball.y - BALL_RADIUS < 0) {
-		// hit top wall; reflect it back
-		reboundY = BALL_RADIUS - ball.y;
-		ball.y   = BALL_RADIUS + reboundY;
-		ball.vy *= -1;
 	}
 	return false;
 }
