@@ -269,41 +269,68 @@ function moveObjects(paddle, ball, blocks) {
 		sideBounce = -1;
 	}
 
-	// See if there's any possibility for a paddle collision
-	if (ball.y + BALL_RADIUS >= paddle.y) {
-		// See if the bottom of the ball went from above paddle top height to below
-		// (exactly at it) during this animation frame. If we crossed over that height
-		// then we'll definitely need to look at where the paddle was for a collision
-		if (oldY + BALL_RADIUS < paddle.y) {
-			// Okay, where exactly was the ball (left/right) when it was at the
-			// paddle top height?
-			reboundY = ball.y + BALL_RADIUS - paddle.y;
-			if (reboundY > 0) {
-				percentage = ball.vy / reboundY;
-				partialX   = oldX + (ball.vx * percentage);
-				if (sideBounce != 0) {
-					partialX = oldX + (ball.vx * -1 * percentage);
+	// Handle paddle collision
+	if (ballTouchingPaddle) {
+		if (ballInBounds) { // easy collision; ball only hit paddle (not a wall too)
+			if (oldY < paddle.y) {
+				// center of ball _was_ above top of paddle
+				reboundY = (ball.y + BALL_RADIUS) - paddle.y;
+				ball.y  -= reboundY * 2;
+				ball.vy *= -1;
+				return false; // done moving ball; game not over
+			}
+			// Looks like we probably just hit the side edge of the paddle
+			if (oldX < paddle.x + (PADDLE_WIDTH / 2)) {
+				// Hit left side of paddle
+				reboundX = (ball.x + BALL_RADIUS) - paddle.x;
+				ball.x  -= reboundX * 2;
+				ball.vx *= -1;
+				if (ball.x - BALL_RADIUS < 0) {
+					console.log("TODO: edge-case #2 hit; write code to handle it.");
 				}
-				if (sideBounce > 0 && partialX + BALL_RADIUS > CANVAS_WIDTH) {
-					reboundX = partialX + BALL_RADIUS - CANVAS_WIDTH;
-					partialX = CANVAS_WIDTH - reboundX;
-				} else if (sideBounce < 0 && partialX - BALL_RADIUS < 0) {
-					partialX = BALL_RADIUS - partialX;
-				}
-				if (partialX >= paddle.x && partialX <= paddle.x + PADDLE_WIDTH) {
-					// Bounce off paddle and handle Y movement
-					ball.y   = paddle.y - reboundY - BALL_RADIUS;
-					ball.vy *= -1;
-					return false;
-				}
-			} else { // we expect reboundY to be exactly 0 in this case
-				if (ball.x >= paddle.x && ball.x <= paddle.x + PADDLE_WIDTH) {
-					// Bounce off paddle
-					ball.vy *= -1;
-					return false;
+			} else {
+				// Hit right side of paddle
+				reboundX = (paddle.x + PADDLE_WIDTH) - (ball.x - BALL_RADIUS);
+				ball.x  += reboundX * 2;
+				ball.vx *= -1;
+				if (ball.x + BALL_RADIUS > CANVAS_WIDTH) {
+					console.log("TODO: edge-case #3 hit; write code to handle it.");
 				}
 			}
+			return false; // done moving ball; game not over yet (will be soon)
 		}
+
+		// Difficult corner collision; ball simultaneously hit paddle and
+		// a wall (!ballInBounds)
+		if (oldY < paddle.y) {
+			// Whether ball is squashed between paddle and wall or is just a
+			// simultanous corner collision, if center of ball _was_ above top of
+			// paddle line, make ball bounce up and away from paddle/wall as
+			// necessary to free it
+			reboundY = (ball.y + BALL_RADIUS) - paddle.y;
+			ball.y  -= reboundY * 2;
+			ball.vy *= -1;
+			if (ball.x - BALL_RADIUS < 0) {
+				// Left wall
+				reboundX = BALL_RADIUS - ball.x;
+				ball.x  += reboundX * 2;
+			} else if (ball.x + BALL_RADIUS > CANVAS_WIDTH) {
+				// Right wall
+				reboundX = (ball.x + BALL_RADIUS) - CANVAS_WIDTH;
+				ball.x  -= reboundX * 2;
+			}
+			ball.vx *= -1;
+			return false; // done moving ball; game not over
+		}
+
+		// User trapped ball between paddle and wall; "warp" ball w/new position & angle
+		// New angle will be upward by at least 45 degrees or more
+		var startingAngle = Math.random() * (Math.PI / 2) + (Math.PI / 4);
+		ball.y  = Math.floor(CANVAS_HEIGHT / 2);
+		ball.x  = Math.floor(CANVAS_WIDTH / 2);
+		ball.vy = Math.sin(startingAngle) * BALL_VELOCITY;
+		ball.vx = Math.cos(startingAngle) * BALL_VELOCITY;
+		return false; // done moving ball; game not over
 	}
 
 	// Calculate actual new y position, taking into account possible wall collisions
