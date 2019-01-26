@@ -254,21 +254,6 @@ function moveObjects(paddle, ball, blocks) {
 		return true; // Ending game
 	}
 
-	// Calculate actual new x position, taking into account possible wall collisions
-	if (ball.x + BALL_RADIUS > CANVAS_WIDTH) {
-		// hit right wall; reflect it back
-		reboundX   = ball.x + BALL_RADIUS - CANVAS_WIDTH;
-		ball.x     = CANVAS_WIDTH - BALL_RADIUS - reboundX;
-		ball.vx   *= -1;
-		sideBounce =  1;
-	} else if (ball.x - BALL_RADIUS < 0) {
-		// hit left wall; reflect it back
-		reboundX   = BALL_RADIUS - ball.x;
-		ball.x     = BALL_RADIUS + reboundX;
-		ball.vx   *= -1;
-		sideBounce = -1;
-	}
-
 	// Handle paddle collision
 	if (ballTouchingPaddle) {
 		if (ballInBounds) { // easy collision; ball only hit paddle (not a wall too)
@@ -331,6 +316,21 @@ function moveObjects(paddle, ball, blocks) {
 		ball.vy = Math.sin(startingAngle) * BALL_VELOCITY;
 		ball.vx = Math.cos(startingAngle) * BALL_VELOCITY;
 		return false; // done moving ball; game not over
+	}
+
+	// Calculate actual new x position, taking into account possible wall collisions
+	if (ball.x + BALL_RADIUS > CANVAS_WIDTH) {
+		// hit right wall; reflect it back
+		reboundX   = ball.x + BALL_RADIUS - CANVAS_WIDTH;
+		ball.x     = CANVAS_WIDTH - BALL_RADIUS - reboundX;
+		ball.vx   *= -1;
+		sideBounce =  1;
+	} else if (ball.x - BALL_RADIUS < 0) {
+		// hit left wall; reflect it back
+		reboundX   = BALL_RADIUS - ball.x;
+		ball.x     = BALL_RADIUS + reboundX;
+		ball.vx   *= -1;
+		sideBounce = -1;
 	}
 
 	// Calculate actual new y position, taking into account possible wall collisions
